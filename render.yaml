@@ -4,21 +4,20 @@
 #  (application + base de données) en un seul clic.
 # ============================================================
 
-services:
-  # ── Base de données PostgreSQL ──────────────────────────
-  - type: pserv            # base PostgreSQL interne
-    name: vad-database
-    region: frankfurt      # plus proche de la RDC que les USA
-    ip: "10.0.0.0"
-    plan: free             # gratuit (90 jours sur Render)
-    env: docker
-    repo: null
+databases:
+  - name: vad-database
+    databaseName: vad
+    user: vad_user
+    region: frankfurt
+    plan: free
+    ipAllowList: []
 
+services:
   # ── Application Web VAD ─────────────────────────────────
   - type: web
     name: vad-asbl
     region: frankfurt
-    plan: free             # plan gratuit
+    plan: free
     env: node
     buildCommand: npm install && node deploy-setup.js
     startCommand: node src/index.js
@@ -33,5 +32,3 @@ services:
         generateValue: true
       - key: PUBLIC_BASE_URL
         value: https://vad-asbl.onrender.com
-      - key: NODE_VERSION
-        value: 20.20.2

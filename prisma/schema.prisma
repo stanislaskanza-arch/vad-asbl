@@ -1,0 +1,355 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./vad.db"
+}
+
+model AdminUser {
+  id           String    @id @default(uuid())
+  username     String    @unique
+  email        String    @unique
+  passwordHash String    @map("password_hash")
+  firstName    String    @map("first_name")
+  lastName     String    @map("last_name")
+  role         String    @default("editor")
+  isActive     Boolean   @default(true) @map("is_active")
+  lastLogin    DateTime? @map("last_login")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  @@map("admin_users")
+}
+
+model Member {
+  id               String          @id @default(uuid())
+  membershipNumber String          @unique @map("membership_number")
+  sponsoredBy      String?         @map("sponsored_by")
+  sponsor          Member?         @relation("Sponsorship", fields: [sponsoredBy], references: [id])
+  sponsored        Member[]        @relation("Sponsorship")
+  firstName        String          @map("first_name")
+  lastName         String          @map("last_name")
+  gender           String?
+  dateOfBirth      DateTime?       @map("date_of_birth")
+  email            String?         @unique
+  phone            String?
+  address          String?
+  city             String?
+  province         String?
+  country          String?         @default("RDC")
+  idCardNumber     String?         @map("id_card_number")
+  profession       String?
+  photoUrl         String?         @map("photo_url")
+  registrationDate DateTime        @default(now()) @map("registration_date")
+  status           String          @default("active")
+  membershipType   String          @default("regular") @map("membership_type")
+  notes            String?
+  createdAt        DateTime        @default(now()) @map("created_at")
+  updatedAt        DateTime        @updatedAt @map("updated_at")
+
+  contributions     Contribution[]
+  loans             Loan[]
+  aipAccount        AipAccount?
+  referralLinks     ReferralLink[]
+  assistanceRequests AssistanceRequest[]
+
+  @@map("members")
+}
+
+model ContributionType {
+  id            String        @id @default(uuid())
+  code          String        @unique
+  name          String
+  description   String?
+  defaultAmount Float?        @map("default_amount")
+  currency      String?       @default("CDF")
+  frequency     String?
+  aipRate       Float         @default(0) @map("aip_rate")
+  isRequired    Boolean       @default(false) @map("is_required")
+  isActive      Boolean       @default(true) @map("is_active")
+  createdAt     DateTime      @default(now()) @map("created_at")
+
+  contributions Contribution[]
+
+  @@map("contribution_types")
+}
+
+model Contribution {
+  id                String           @id @default(uuid())
+  memberId          String           @map("member_id")
+  contributionTypeId String          @map("contribution_type_id")
+  amount            Float
+  currency          String           @default("CDF")
+  paymentDate       DateTime         @map("payment_date")
+  periodStart       DateTime?        @map("period_start")
+  periodEnd         DateTime?        @map("period_end")
+  paymentMethodId   String?          @map("payment_method_id")
+  reference         String?
+  status            String           @default("confirmed")
+  aipGenerated      Boolean          @default(false) @map("aip_generated")
+  receiptNumber     String?          @unique @map("receipt_number")
+  notes             String?
+  recordedBy        String?          @map("recorded_by")
+  createdAt         DateTime         @default(now()) @map("created_at")
+  updatedAt         DateTime         @updatedAt @map("updated_at")
+
+  member           Member           @relation(fields: [memberId], references: [id])
+  contributionType ContributionType @relation(fields: [contributionTypeId], references: [id])
+
+  @@map("contributions")
+}
+
+model AipAccount {
+  id             String   @id @default(uuid())
+  memberId       String   @unique @map("member_id")
+  balance        Float    @default(0)
+  totalCredited  Float    @default(0) @map("total_credited")
+  totalDebited   Float    @default(0) @map("total_debited")
+  reservedAmount Float    @default(0) @map("reserved_amount")
+  currency       String   @default("CDF")
+  lastUpdated    DateTime @default(now()) @map("last_updated")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  member      Member          @relation(fields: [memberId], references: [id])
+  transactions AipTransaction[]
+
+  @@map("aip_accounts")
+}
+
+model AipTransaction {
+  id             String   @id @default(uuid())
+  aipAccountId   String   @map("aip_account_id")
+  sourceMemberId String?  @map("source_member_id")
+  contributionId String?  @map("contribution_id")
+  type           String
+  amount         Float
+  description    String?
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  aipAccount AipAccount @relation(fields: [aipAccountId], references: [id])
+
+  @@map("aip_transactions")
+}
+
+model ThirdPartyContribution {
+  id              String   @id @default(uuid())
+  type            String
+  donorName       String   @map("donor_name")
+  donorContact    String?  @map("donor_contact")
+  amount          Float
+  currency        String   @default("CDF")
+  contributionDate DateTime @map("contribution_date")
+  description     String?
+  projectName     String?  @map("project_name")
+  contractReference String? @map("contract_reference")
+  isRecurring     Boolean  @default(false) @map("is_recurring")
+  receiptNumber   String?  @unique @map("receipt_number")
+  status          String   @default("received")
+  recordedBy      String?  @map("recorded_by")
+  notes           String?
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@map("third_party_contributions")
+}
+
+model FundAllocation {
+  id            String   @id @default(uuid())
+  sourceType    String   @map("source_type")
+  sourceId      String?  @map("source_id")
+  amount        Float
+  currency      String   @default("CDF")
+  category      String
+  description   String
+  recipient     String?
+  allocationDate DateTime @default(now()) @map("allocation_date")
+  approvedBy    String?  @map("approved_by")
+  notes         String?
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("fund_allocations")
+}
+
+model LoanProduct {
+  id                String  @id @default(uuid())
+  code              String  @unique
+  name              String
+  description       String?
+  minAmount         Float   @map("min_amount")
+  maxAmount         Float   @map("max_amount")
+  currency          String  @default("CDF")
+  interestRate      Float   @default(0) @map("interest_rate")
+  interestType      String  @default("flat") @map("interest_type")
+  minDurationMonths Int     @default(1) @map("min_duration_months")
+  maxDurationMonths Int     @map("max_duration_months")
+  gracePeriodDays   Int     @default(0) @map("grace_period_days")
+  requiresGuarantor Boolean @default(false) @map("requires_guarantor")
+  processingFee     Float   @default(0) @map("processing_fee")
+  latePenaltyRate   Float   @default(0) @map("late_penalty_rate")
+  isActive          Boolean @default(true) @map("is_active")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  loans Loan[]
+
+  @@map("loan_products")
+}
+
+model Loan {
+  id              String    @id @default(uuid())
+  memberId        String    @map("member_id")
+  loanProductId   String    @map("loan_product_id")
+  loanNumber      String    @unique @map("loan_number")
+  amountRequested Float     @map("amount_requested")
+  amountApproved  Float?    @map("amount_approved")
+  amountDisbursed Float?    @map("amount_disbursed")
+  currency        String    @default("CDF")
+  interestRate    Float     @default(0) @map("interest_rate")
+  durationMonths  Int       @map("duration_months")
+  purpose         String?
+  status          String    @default("pending")
+  applicationDate DateTime  @default(now()) @map("application_date")
+  approvalDate    DateTime? @map("approval_date")
+  disbursementDate DateTime? @map("disbursement_date")
+  expectedEndDate DateTime? @map("expected_end_date")
+  completedDate   DateTime? @map("completed_date")
+  approvedBy      String?   @map("approved_by")
+  notes           String?
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  member      Member          @relation(fields: [memberId], references: [id])
+  loanProduct LoanProduct     @relation(fields: [loanProductId], references: [id])
+  repayments  LoanRepayment[]
+
+  @@map("loans")
+}
+
+model LoanRepayment {
+  id              String    @id @default(uuid())
+  loanId          String    @map("loan_id")
+  installmentNumber Int      @map("installment_number")
+  dueDate         DateTime  @map("due_date")
+  principalDue    Float     @map("principal_due")
+  interestDue     Float     @default(0) @map("interest_due")
+  penaltyDue      Float     @default(0) @map("penalty_due")
+  amountPaid      Float     @default(0) @map("amount_paid")
+  paymentDate     DateTime? @map("payment_date")
+  paymentMethodId String?   @map("payment_method_id")
+  reference       String?
+  status          String    @default("pending")
+  notes           String?
+  recordedBy      String?   @map("recorded_by")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  loan Loan @relation(fields: [loanId], references: [id])
+
+  @@map("loan_repayments")
+}
+
+model AssistanceType {
+  id             String   @id @default(uuid())
+  code           String   @unique
+  name           String
+  description    String?
+  maxAmount      Float?   @map("max_amount")
+  currency       String?  @default("CDF")
+  requiresApproval Boolean @default(true) @map("requires_approval")
+  isActive       Boolean  @default(true) @map("is_active")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  requests AssistanceRequest[]
+
+  @@map("assistance_types")
+}
+
+model AssistanceRequest {
+  id              String    @id @default(uuid())
+  memberId        String    @map("member_id")
+  assistanceTypeId String   @map("assistance_type_id")
+  amountRequested Float     @map("amount_requested")
+  amountApproved  Float?    @map("amount_approved")
+  currency        String    @default("CDF")
+  description     String?
+  justification   String?
+  status          String    @default("pending")
+  requestDate     DateTime  @default(now()) @map("request_date")
+  reviewDate      DateTime? @map("review_date")
+  paidDate        DateTime? @map("paid_date")
+  reviewedBy      String?   @map("reviewed_by")
+  rejectionReason String?   @map("rejection_reason")
+  notes           String?
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  member         Member         @relation(fields: [memberId], references: [id])
+  assistanceType AssistanceType @relation(fields: [assistanceTypeId], references: [id])
+
+  @@map("assistance_requests")
+}
+
+model ReferralLink {
+  id                 String    @id @default(uuid())
+  memberId           String    @map("member_id")
+  code               String    @unique
+  isActive           Boolean   @default(true) @map("is_active")
+  totalClicks        Int       @default(0) @map("total_clicks")
+  totalRegistrations Int       @default(0) @map("total_registrations")
+  lastClickedAt      DateTime? @map("last_clicked_at")
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+
+  member Member          @relation(fields: [memberId], references: [id])
+  events ReferralEvent[]
+
+  @@map("referral_links")
+}
+
+model ReferralEvent {
+  id            String   @id @default(uuid())
+  referralLinkId String  @map("referral_link_id")
+  eventType     String   @map("event_type")
+  ipAddress     String?  @map("ip_address")
+  userAgent     String?  @map("user_agent")
+  referrerUrl   String?  @map("referrer_url")
+  landingPage   String?  @map("landing_page")
+  newMemberId   String?  @map("new_member_id")
+  metadata      String   @default("{}")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  referralLink ReferralLink @relation(fields: [referralLinkId], references: [id])
+
+  @@map("referral_events")
+}
+
+model GrowthProjection {
+  id                    String   @id @default(uuid())
+  name                  String
+  description           String?
+  projectionType        String   @map("projection_type")
+  baseGrowthRate        Float    @default(5) @map("base_growth_rate")
+  optimisticRate        Float    @default(10) @map("optimistic_rate")
+  pessimisticRate       Float    @default(2) @map("pessimistic_rate")
+  referralConversionRate Float   @default(15) @map("referral_conversion_rate")
+  averageFlcpAmount     Float    @default(5000) @map("average_flcp_amount")
+  projectionMonths      Int      @default(12) @map("projection_months")
+  isActive              Boolean  @default(true) @map("is_active")
+  createdBy             String?  @map("created_by")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  @@map("growth_projections")
+}
+
+model Setting {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  value       String
+  description String?
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("settings")
+}

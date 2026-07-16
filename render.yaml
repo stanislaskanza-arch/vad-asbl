@@ -1,8 +1,3 @@
-# ============================================================
-#  Configuration Render "Blueprint" pour VAD
-#  Application web simple (gratuit, sans carte bancaire)
-# ============================================================
-
 services:
   - type: web
     name: vad-asbl
@@ -16,8 +11,8 @@ services:
     autoDeploy: true
     envVars:
       - key: DATABASE_URL
-        value: file:./vad.db
+        value: "file:./vad.db"
       - key: JWT_SECRET
         generateValue: true
       - key: PUBLIC_BASE_URL
-        value: https://vad-asbl.onrender.com
+        value: "https://vad-asbl.onrender.com"

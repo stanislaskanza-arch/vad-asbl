@@ -1,13 +1,9 @@
 /**
  * deploy-setup.js
- * ────────────────────────────────────────────────────────────
- * Prépare la base de données au déploiement.
- * - Convertit le schéma Prisma de SQLite → PostgreSQL (si nécessaire)
- * - Applique le schéma à la base (db push)
+ * Prépare la base de données au déploiement (Render ou Railway).
+ * - Si DATABASE_URL pointe vers PostgreSQL : convertit le schéma et l'applique
  * - Initialise les données de démonstration (seulement si la base est vide)
- *
- * Lancé automatiquement par Render pendant le build.
- * ──────────────────────────────────────────────────────────── */
+ */
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
@@ -34,12 +30,15 @@ function main() {
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
   if (!process.env.DATABASE_URL) {
-    console.error('❌ DATABASE_URL non défini. Impossible de continuer.');
+    console.error('❌ DATABASE_URL non défini.');
     process.exit(1);
   }
   console.log('✓ DATABASE_URL présent');
 
-  ensurePostgresSchema();
+  // Convertir vers PostgreSQL seulement si l'URL contient "postgres"
+  if (process.env.DATABASE_URL.includes('postgres')) {
+    ensurePostgresSchema();
+  }
 
   console.log('\n📦 Génération du client Prisma...');
   execSync('npx prisma generate', { stdio: 'inherit', cwd: __dirname });

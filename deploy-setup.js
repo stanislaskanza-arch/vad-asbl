@@ -30,10 +30,10 @@ function main() {
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
   if (!process.env.DATABASE_URL) {
-    console.error('❌ DATABASE_URL non défini.');
-    process.exit(1);
+    console.log('ℹ️  DATABASE_URL non défini → utilisation de SQLite local (file:./vad.db)');
+    process.env.DATABASE_URL = 'file:./vad.db';
   }
-  console.log('✓ DATABASE_URL présent');
+  console.log('✓ Base de données configurée');
 
   // Convertir vers PostgreSQL seulement si l'URL contient "postgres"
   if (process.env.DATABASE_URL.includes('postgres')) {

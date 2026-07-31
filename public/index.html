@@ -1140,15 +1140,20 @@ async function viewMission(){
 }
 
 async function viewEquipe(){
+  const team = [
+    { ini:'KS', name:'KANZA NZINU Stanislas', role:'Coordonnateur Principal', badge:'gold', desc:"President National de VAD, Garant des missions allouees a l ASBL VAD. Charge de la gestion des activites VAD au quotidien.", lead:true },
+    { ini:'MS', name:'MATA MALEKAMA Samuek', role:'Vice President VAD', badge:'blue', desc:"Coordonnateur VAD. Charge de l administration et des finances de l Association." },
+    { ini:'NC', name:'NDONA NGEMBA Constance', role:'Tresoriere Principale', badge:'green', desc:"Chargee de la Tresorerie et de la relation avec les partenaires." },
+    { ini:'MJ', name:'MBAKISI Jocelyne', role:'Tresoriere des antennes VAD', badge:'green', desc:"Chargee de la tresorerie des antennes VAD." },
+    { ini:'DI', name:'DINO MBEDI IDUMA', role:'Charge des Projets VAD', badge:'blue', desc:"Charge des projets VAD et du developpement de l ASBL VAD." },
+  ];
   return publicHeader('/mission/equipe')+missionHero('comment-ca-marche.jpg','Equipe de travail','','','Les femmes et les hommes qui font vivre la VAD au quotidien.')+`
-  <section class="section"><div class="wrap" style="max-width:900px">
-    <div style="text-align:center;margin-bottom:36px" class="reveal"><h2 style="font-size:clamp(24px,4vw,30px);color:var(--green-900);font-weight:800">La direction nationale</h2><p class="slate">Une equipe engagee et devouee a la cause de la VAD.</p></div>
+  <section class="section"><div class="wrap" style="max-width:960px">
+    <div style="text-align:center;margin-bottom:36px" class="reveal"><div class="badge badge-green">Comite Directeur</div><h2 style="font-size:clamp(22px,4vw,28px);color:var(--green-900);margin-top:12px;font-weight:800;line-height:1.3">Comite Directeur de l ASBL<br/>Vision d Assistance et de Developpement (VAD)</h2></div>
     <div class="grid grid-3">
-      <div class="card reveal" style="text-align:center;padding:28px"><div class="avatar gold" style="width:80px;height:80px;font-size:30px;margin:0 auto 14px">KS</div><h3 style="color:var(--green-900)">KANZA NZINU Stanislas</h3><div class="badge badge-gold" style="margin-top:6px">Coordonnateur National</div></div>
-      <div class="card reveal" style="text-align:center;padding:28px;animation-delay:.1s"><div class="avatar" style="width:80px;height:80px;font-size:30px;margin:0 auto 14px">RF</div><h3 style="color:var(--green-900)">Responsable des Finances</h3><div class="badge badge-blue" style="margin-top:6px">RF-VAD</div></div>
-      <div class="card reveal" style="text-align:center;padding:28px;animation-delay:.2s"><div class="avatar" style="width:80px;height:80px;font-size:30px;margin:0 auto 14px">SE</div><h3 style="color:var(--green-900)">Secretariat</h3><div class="badge badge-gray" style="margin-top:6px">Administration</div></div>
+      ${team.map((m,i)=>`<div class="card reveal" style="text-align:center;padding:28px;${m.lead?'border-top:4px solid var(--gold);box-shadow:var(--shadow-lg)':''}"><div class="avatar ${m.badge==='gold'?'gold':''}" style="width:84px;height:84px;font-size:30px;margin:0 auto 14px">${m.ini}</div><h3 style="font-size:16px;color:var(--green-900);line-height:1.3;margin-bottom:6px">${m.name}</h3><div class="badge badge-${m.badge}" style="margin-bottom:12px">${m.role}</div><p class="slate" style="font-size:13.5px;line-height:1.6">${m.desc}</p></div>`).join('')}
     </div>
-    <div class="card reveal" style="padding:24px;margin-top:20px;background:#fffbeb;border:1px solid #fde68a;text-align:center"><p style="color:#92400e;font-size:14.5px">📋 Cette page sera enrichie avec les photos et coordonnees de toute l'equipe nationale et provinciale.</p></div>
+    <div class="card reveal" style="padding:24px;margin-top:24px;background:linear-gradient(135deg,#064e3b,#047857);color:#fff;text-align:center"><div style="font-family:'Poppins';font-size:22px;font-weight:800;margin-bottom:4px">VAD</div><div style="font-size:15px;opacity:.95">Vision d Assistance et de Developpement — Lutte contre la pauvrete</div><a href="#/contact" class="btn btn-gold" style="margin-top:14px;font-size:14px">Nous contacter</a></div>
   </div></section>`+publicFooter();
 }
 

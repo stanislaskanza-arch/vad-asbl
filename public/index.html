@@ -418,9 +418,9 @@ function shareButtons(links){
    VUES PUBLIQUES
    ============================================================ */
 function publicHeader(active){
-  const links = [['Comment ca marche','/how'],['Cotiser','/cotiser'],['Rejoindre','/join'],['Contact','/contact'],['Espace admin','/login']];
-  const missionSub = [['Mot du President National','/mission/president','🗣️'],['Notre Mission','/mission','🎯'],['Equipe de travail','/mission/equipe','👥'],['Documents administratifs','/mission/documents','📄']];
-  const isMission = active && active.indexOf('/mission')===0;
+  const links = [['Cotiser','/cotiser'],['Rejoindre','/join'],['Contact','/contact'],['Espace admin','/login']];
+  const missionSub = [['Mot du President National','/mission/president','🗣️'],['Notre Mission','/mission','🎯'],['Comment ca marche','/how','📖'],['Equipe de travail','/mission/equipe','👥'],['Documents administratifs','/mission/documents','📄']];
+  const isMission = active && (active.indexOf('/mission')===0 || active==='/how');
   return `<header class="site-header"><div class="wrap">
     <a class="brand" href="#/">${logo(44)}<div class="brand-text"><b>VAD</b><span>Vision d'Assistance et de Developpement</span></div></a>
     <nav class="nav-links">

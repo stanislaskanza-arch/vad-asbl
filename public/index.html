@@ -415,7 +415,7 @@ function bindImageUploads(){
   $('[data-imgreset]').forEach(btn=>{
     btn.onclick = async ()=>{
       const key = btn.dataset.imgreset;
-      try { await api('/content/image/reset', {method:'POST', body:JSON.stringify({key})}); await loadContent(); (async()=>{await loadContent();dispatch();})(); }
+      try { await api('/content/image/reset', {method:'POST', body:JSON.stringify({key})}); await loadContent(); dispatch(); }
       catch(e){ alert(e.message); }
     };
   });
@@ -1568,7 +1568,7 @@ function initSlider(){
   function resetTimer(){ clearInterval(sliderTimer); sliderTimer=setInterval(()=>goSlide(sliderIdx+1),5000); }
   resetTimer();
 }
-dispatch();
+(async()=>{try{await loadContent();}catch(e){}dispatch();})();
 </script>
 </body>
 </html>

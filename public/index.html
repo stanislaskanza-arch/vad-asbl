@@ -4,6 +4,9 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>VAD — Vision d'Assistance et de Développement | Lutte contre la pauvreté</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root{
     --green-900:#064e3b; --green-800:#065f46; --green-700:#047857; --green-600:#059669; --green-100:#d1fae5;
@@ -13,10 +16,14 @@
     --radius:14px; --shadow:0 1px 3px rgba(0,0,0,.08),0 8px 24px rgba(15,23,42,.06);
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.5;-webkit-font-smoothing:antialiased}
+  body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6;-webkit-font-smoothing:antialiased}
+  h1,h2,h3,h4{font-family:'Poppins','Inter',sans-serif}
   a{color:inherit;text-decoration:none}
   img,svg{display:block}
   .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes floatUp{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  .reveal{animation:fadeUp .7s ease both}
   .btn{display:inline-flex;align-items:center;gap:8px;border:none;cursor:pointer;font-size:14px;font-weight:600;padding:11px 18px;border-radius:10px;transition:.15s;font-family:inherit}
   .btn-primary{background:var(--green-700);color:#fff}.btn-primary:hover{background:var(--green-800)}
   .btn-gold{background:linear-gradient(135deg,var(--gold),var(--amber));color:#3b2606}.btn-gold:hover{filter:brightness(1.05)}
@@ -43,7 +50,7 @@
   h1,h2,h3,h4{line-height:1.25}
   .section{padding:54px 0}
   /* ===== Public header ===== */
-  .site-header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50;box-shadow:0 1px 8px rgba(0,0,0,.04)}
+  .site-header{background:rgba(255,255,255,.85);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(226,232,240,.6);position:sticky;top:0;z-index:50;box-shadow:0 4px 24px rgba(15,23,42,.06)}
   .site-header .wrap{display:flex;align-items:center;justify-content:space-between;height:70px}
   .brand{display:flex;align-items:center;gap:12px;cursor:pointer}
   .brand-logo{width:44px;height:44px;flex-shrink:0}
@@ -52,18 +59,25 @@
   .nav-links{display:flex;align-items:center;gap:24px}
   .nav-links a{font-size:14px;font-weight:500;color:var(--slate)}.nav-links a:hover{color:var(--green-700)}
   @media(max-width:680px){.nav-links .hide-sm{display:none}}
-  /* ===== Hero ===== */
-  .hero{background:linear-gradient(135deg,var(--green-900),var(--green-700) 60%,#0d9488);color:#fff;position:relative;overflow:hidden}
-  .hero::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 85% 15%,rgba(212,175,55,.25),transparent 45%);pointer-events:none}
-  .hero .wrap{position:relative;padding:70px 20px;display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
-  @media(max-width:880px){.hero .wrap{grid-template-columns:1fr;padding:48px 20px}}
-  .hero h1{font-size:42px;font-weight:800;margin-bottom:16px;letter-spacing:-.5px}
-  .hero p.lead{font-size:18px;opacity:.92;margin-bottom:26px;max-width:540px}
+  /* ===== Hero moderne avec image de fond ===== */
+  .hero{position:relative;min-height:92vh;display:flex;align-items:center;color:#fff;overflow:hidden;background:linear-gradient(135deg,#064e3b,#047857);}
+  .hero-bg{position:absolute;inset:0;background-image:url('/images/hero-solidarite.jpg');background-size:cover;background-position:center;transform:scale(1.05);}
+  .hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,rgba(6,78,59,.92) 0%,rgba(4,78,57,.78) 45%,rgba(13,148,136,.55) 100%);}
+  .hero .wrap{position:relative;z-index:2;padding:100px 20px;display:grid;grid-template-columns:1.15fr .85fr;gap:50px;align-items:center;width:100%;max-width:1180px;margin:0 auto}
+  @media(max-width:900px){.hero .wrap{grid-template-columns:1fr;padding:70px 20px;text-align:center}.hero{min-height:auto}}
+  .hero .eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.14);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:13px;font-weight:600;padding:8px 16px;border-radius:999px;margin-bottom:22px}
+  .hero h1{font-size:clamp(34px,5vw,56px);font-weight:800;line-height:1.1;letter-spacing:-1px;margin-bottom:20px;text-shadow:0 2px 30px rgba(0,0,0,.3)}
+  .hero h1 .gold{color:var(--gold-light);background:linear-gradient(120deg,var(--gold-light),#fff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .hero p.lead{font-size:18px;opacity:.95;margin-bottom:30px;max-width:560px;line-height:1.7}
+  @media(max-width:900px){.hero p.lead{margin-left:auto;margin-right:auto}}
   .hero .cta{display:flex;gap:14px;flex-wrap:wrap}
-  .hero-stats{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-  .hero-stat{background:rgba(255,255,255,.12);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:18px}
-  .hero-stat .num{font-size:26px;font-weight:800;color:var(--gold-light)}
-  .hero-stat .lbl{font-size:12.5px;opacity:.85}
+  @media(max-width:900px){.hero .cta{justify-content:center}}
+  .hero-stats{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .hero-stat{background:rgba(255,255,255,.13);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.22);border-radius:18px;padding:22px;transition:.3s}
+  .hero-stat:hover{transform:translateY(-6px);background:rgba(255,255,255,.2)}
+  .hero-stat .num{font-family:'Poppins';font-size:30px;font-weight:800;color:var(--gold-light)}
+  .hero-stat .lbl{font-size:13px;opacity:.9;margin-top:2px}
+  @media(max-width:900px){.hero-stats{max-width:480px;margin:0 auto}}
   /* ===== Steps ===== */
   .step{padding:24px}
   .step .ico{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;background:var(--green-100);color:var(--green-700);margin-bottom:14px}
@@ -332,54 +346,86 @@ async function viewHome(){
   let s = { totalMembers:0, activeMembers:0, flcpCount:0, totalFlcp:0, totalThirdParty:0, treasury:0, aipCredited:0, topSponsors:[], provinces:[] };
   try { s = await api('/misc/public-stats'); } catch(e){ /* aperçu hors-ligne : valeurs par défaut */ }
   const hero = `
-    <section class="hero"><div class="wrap">
-      <div>
-        <div class="badge badge-gold" style="margin-bottom:18px">🇨🇩 ASBL — République Démocratique du Congo</div>
-        <h1>Ensemble, luttons contre la pauvreté</h1>
-        <p class="lead">La <b>VAD — Vision d'Assistance et de Développement</b> réunit des femmes et des hommes solidaires autour d'un fonds commun, le <b>FLCP</b>, pour financer l'assistance et le développement de nos communautés.</p>
+    <section class="hero"><div class="hero-bg"></div><div class="wrap">
+      <div class="reveal">
+        <div class="eyebrow">🇨🇩 ASBL · République Démocratique du Congo</div>
+        <h1>Ensemble, <span class="gold">luttons contre la pauvreté</span></h1>
+        <p class="lead">La <b>VAD — Vision d'Assistance et de Développement</b> réunit des femmes et des hommes solidaires autour du <b>FLCP</b>, un fonds commun qui finance l'assistance et le développement de nos communautés.</p>
         <div class="cta">
           <a class="btn btn-gold" href="#/join">🤝 Devenir membre</a>
-          <a class="btn btn-ghost" style="background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.3)" href="#/how">Découvrir le système</a>
+          <a class="btn btn-ghost" style="background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.35);backdrop-filter:blur(6px)" href="#/how">Découvrir le système →</a>
         </div>
       </div>
-      <div class="hero-stats">
+      <div class="hero-stats reveal" style="animation-delay:.15s">
         <div class="hero-stat"><div class="num">${fmt(s.totalMembers)}</div><div class="lbl">Membres actifs</div></div>
-        <div class="hero-stat"><div class="num">${shortMoney(s.treasury)}</div><div class="lbl">Fonds mobilisés (trésorerie)</div></div>
+        <div class="hero-stat"><div class="num">${shortMoney(s.treasury)}</div><div class="lbl">Fonds mobilisés</div></div>
         <div class="hero-stat"><div class="num">${fmt(s.flcpCount)}</div><div class="lbl">Cotisations FLCP</div></div>
-        <div class="hero-stat"><div class="num">${money(s.aipCredited)}</div><div class="lbl">AIP reversée aux parrains</div></div>
+        <div class="hero-stat"><div class="num">${money(s.aipCredited)}</div><div class="lbl">AIP reversée</div></div>
       </div>
     </div></section>`;
   const steps = `
     <section class="section"><div class="wrap">
-      <div style="text-align:center;margin-bottom:34px"><div class="badge badge-green">Notre fonctionnement</div><h2 style="font-size:30px;color:var(--green-900);margin-top:10px">Trois piliers solidaires</h2></div>
+      <div style="text-align:center;margin-bottom:42px;max-width:640px;margin-left:auto;margin-right:auto" class="reveal">
+        <div class="badge badge-green">Notre fonctionnement</div>
+        <h2 style="font-size:clamp(26px,4vw,34px);color:var(--green-900);margin-top:12px;font-weight:800">Trois piliers solidaires</h2>
+        <p class="slate" style="margin-top:8px;font-size:16px">Un modèle simple et transparent où chaque membre contribue, parraine et bénéficie de l'assistance.</p>
+      </div>
       <div class="grid grid-3">
-        <div class="card step"><div class="ico">🌱</div><h3>1. Le FLCP</h3><p>Chaque membre cotise mensuellement au <b>Fonds pour la Lutte Contre la Pauvreté</b> (5 000 CDF). Ce fonds commun finance nos actions.</p></div>
-        <div class="card step"><div class="ico">🤝</div><h3>2. Le Parrainage</h3><p>Chaque membre peut recruter d'autres membres via son lien de parrainage et développer son réseau de solidarité.</p></div>
-        <div class="card step"><div class="ico">💰</div><h3>3. L'AIP</h3><p>L'<b>Assistance Individuelle Programmée</b> : 30% du FLCP de chaque filleul est crédité au compte AIP de son parrain.</p></div>
+        <div class="card step reveal" style="border-top:4px solid var(--green-600)"><div class="ico" style="background:linear-gradient(135deg,#d1fae5,#a7f3d0)">🌱</div><h3>1. Le FLCP</h3><p>Chaque membre cotise mensuellement au <b>Fonds pour la Lutte Contre la Pauvreté</b> (5 000 CDF). Ce fonds commun finance nos actions.</p></div>
+        <div class="card step reveal" style="border-top:4px solid var(--gold);animation-delay:.1s"><div class="ico" style="background:linear-gradient(135deg,#fef3c7,#fde68a)">🤝</div><h3>2. Le Parrainage</h3><p>Recrutez de nouveaux membres via votre lien de parrainage et développez votre réseau de solidarité à travers la RDC.</p></div>
+        <div class="card step reveal" style="border-top:4px solid #2563eb;animation-delay:.2s"><div class="ico" style="background:linear-gradient(135deg,#dbeafe,#bfdbfe)">💰</div><h3>3. L'AIP</h3><p>L'<b>Assistance Individuelle Programmée</b> : 30% du FLCP de chaque filleul est crédité au compte AIP de son parrain.</p></div>
       </div>
     </div></section>`;
-  const stats2 = `
-    <section class="section" style="background:#fff"><div class="wrap">
-      <h2 style="font-size:24px;color:var(--green-900);margin-bottom:6px">La solidarité en chiffres</h2>
-      <p class="slate" style="margin-bottom:24px">Impact réel de notre réseau de membres à travers la RDC.</p>
-      <div class="grid grid-4" style="margin-bottom:30px">
-        ${kpi('Trésorerie totale', shortMoney(s.treasury), '70% FLCP + subventions + dons + legs', '🏦')}
-        ${kpi('FLCP collecté', money(s.totalFlcp), `${fmt(s.flcpCount)} cotisations`, '💵','gold')}
-        ${kpi('Contributions de tiers', shortMoney(s.totalThirdParty), 'Subventions, dons & legs', '🎁')}
-        ${kpi('AIP crédité', money(s.aipCredited), 'Reversé aux parrains (30%)', '📈')}
+  // Section impact avec image de fond
+  const impact = `
+    <section style="position:relative;padding:80px 0;color:#fff;overflow:hidden;background:#064e3b">
+      <div style="position:absolute;inset:0;background-image:url('/images/section-developpement.jpg');background-size:cover;background-position:center;background-attachment:fixed"></div>
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,78,59,.93),rgba(4,78,57,.88))"></div>
+      <div class="wrap" style="position:relative;z-index:2">
+        <div style="text-align:center;margin-bottom:36px" class="reveal">
+          <h2 style="font-size:clamp(26px,4vw,34px);font-weight:800">La solidarité en chiffres</h2>
+          <p style="opacity:.9;margin-top:8px;font-size:16px">Impact réel de notre réseau à travers la République Démocratique du Congo.</p>
+        </div>
+        <div class="grid grid-4" style="margin-bottom:36px">
+          ${kpiImpact('Trésorerie totale', shortMoney(s.treasury), '70% FLCP + subventions + dons', '🏦')}
+          ${kpiImpact('FLCP collecté', money(s.totalFlcp), fmt(s.flcpCount)+' cotisations', '💵')}
+          ${kpiImpact('Tiers (subventions/dons/legs)', shortMoney(s.totalThirdParty), 'Partenaires & donateurs', '🎁')}
+          ${kpiImpact('AIP crédité aux parrains', money(s.aipCredited), '30% reversé automatiquement', '📈')}
+        </div>
+        <div class="grid grid-2">
+          <div style="background:rgba(255,255,255,.1);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.2);border-radius:16px;padding:24px">
+            <h3 style="color:#fff;font-size:18px;margin-bottom:14px">🏆 Meilleurs parrains</h3>
+            ${s.topSponsors && s.topSponsors.length ? s.topSponsors.map((sp,i)=>`<div class="stat-row" style="border-color:rgba(255,255,255,.12);color:#e2e8f0"><span>${sp.firstName} ${sp.lastName}</span><b style="color:var(--gold-light)">${sp.directReferrals} filleul${sp.directReferrals>1?'s':''}</b></div>`).join('') : '<div style="opacity:.7;text-align:center;padding:20px">Bientôt vos premiers parrains !</div>'}
+          </div>
+          <div style="background:rgba(255,255,255,.1);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.2);border-radius:16px;padding:24px">
+            <h3 style="color:#fff;font-size:18px;margin-bottom:14px">📍 Présence par province</h3>
+            ${s.provinces && s.provinces.length ? barChart(s.provinces.map(p=>({v:p._count.province,l:p.province||'—'})),{color:'gold'}) : '<div style="opacity:.7;text-align:center;padding:20px">—</div>'}
+          </div>
+        </div>
       </div>
-      <div class="grid grid-2">
-        <div class="panel"><h3>🏆 Meilleurs parrains</h3>${s.topSponsors.length? `<div>${s.topSponsors.map((sp,i)=>`<div class="stat-row"><span><span class="avatar ${i===0?'gold':''}" style="width:30px;height:30px;font-size:12px;display:inline-flex;vertical-align:middle;margin-right:8px">${i+1}</span> ${esc(sp.firstName)} ${esc(sp.lastName)}</span><b>${sp.directReferrals} filleul${sp.directReferrals>1?'s':''}</b></div>`).join('')}</div>`:`<div class="empty"><div class="ic">🏆</div>Aucun parrain pour le moment</div>`}</div>
-        <div class="panel"><h3>📍 Présence par province</h3>${s.provinces && s.provinces.length? barChart(s.provinces.map(p=>({v:p._count.province,l:p.province||'—'})),{color:'gold'}) : `<div class="empty"><div class="ic">📍</div>—</div>`}</div>
-      </div>
-    </div></section>`;
-  const cta = `
-    <section class="section" style="background:linear-gradient(135deg,var(--green-800),#0d9488);color:#fff;text-align:center">
-      <div class="wrap"><h2 style="font-size:28px;margin-bottom:12px">Prêt à rejoindre le mouvement ?</h2>
-      <p style="font-size:17px;opacity:.9;margin-bottom:24px">Devenez membre de la VAD et contribuez à la lutte contre la pauvreté.</p>
-      <a class="btn btn-gold" href="#/join" style="font-size:16px;padding:14px 28px">🤝 Rejoindre la VAD</a></div>
     </section>`;
-  return publicHeader('/')+hero+steps+stats2+cta+publicFooter();
+  const cta = `
+    <section style="position:relative;padding:90px 0;text-align:center;color:#fff;overflow:hidden">
+      <div style="position:absolute;inset:0;background-image:url('/images/cta-espoir.jpg');background-size:cover;background-position:center"></div>
+      <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(6,78,59,.9),rgba(13,148,136,.82))"></div>
+      <div class="wrap" style="position:relative;z-index:2;max-width:680px" class="reveal">
+        <h2 style="font-size:clamp(28px,4.5vw,38px);font-weight:800;margin-bottom:14px">Prêt à rejoindre le mouvement ?</h2>
+        <p style="font-size:18px;opacity:.95;margin-bottom:28px">Devenez membre de la VAD. Chaque cotisation, chaque parrainage, rapproche une famille de la dignité.</p>
+        <a class="btn btn-gold" href="#/join" style="font-size:16px;padding:16px 32px">🤝 Rejoindre la VAD</a>
+        <div style="margin-top:18px"><a class="btn btn-ghost" style="background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.35)" href="#/cotiser">💳 Cotiser en ligne</a></div>
+      </div>
+    </section>`;
+  return publicHeader('/')+hero+steps+impact+cta+publicFooter();
+}
+
+// KPI version glassmorphism (fond sombre)
+function kpiImpact(label, value, sub, icon){
+  return `<div style="background:rgba(255,255,255,.1);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.2);border-radius:16px;padding:22px">
+    <div style="font-size:24px;margin-bottom:6px">${icon||''}</div>
+    <div style="font-size:12.5px;opacity:.85;font-weight:600;text-transform:uppercase;letter-spacing:.4px">${esc(label)}</div>
+    <div style="font-family:'Poppins';font-size:26px;font-weight:800;color:var(--gold-light);margin:4px 0">${value}</div>
+    <div style="font-size:12px;opacity:.75">${sub||''}</div>
+  </div>`;
 }
 
 function viewHow(){

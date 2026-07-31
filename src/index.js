@@ -25,9 +25,12 @@ app.use('/api/forecasts', require('./routes/forecasts'));
 app.use('/api/misc', require('./routes/misc'));
 app.use('/api/content', require('./routes/content'));
 
-// Frontend intégré
-app.use(express.static(path.join(__dirname, '../public')));
-app.get('*', (req, res) => { res.sendFile(path.join(__dirname, '../public', 'index.html')); });
+// Frontend intégré — anti-cache pour index.html (toujours la dernière version)
+app.use(express.static(path.join(__dirname, '../public'), { maxAge: '1d' }));
+app.get('*', (req, res) => {
+  res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.sendFile(path.join(__dirname, '../public', 'index.html'));
+});
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`\n🚀 VAD Application lancée sur http://0.0.0.0:${PORT}`);

@@ -498,6 +498,15 @@ function kpiImpact(label, value, sub, icon){
 
 function viewHow(){
   return publicHeader('/how')+`
+  <section style="position:relative;overflow:hidden;color:#fff;display:flex;align-items:center;min-height:58vh">
+    <div style="position:absolute;inset:0;background-image:url('/images/comment-ca-marche.jpg');background-size:cover;background-position:center"></div>
+    <div style="position:absolute;inset:0;background:linear-gradient(115deg,rgba(6,78,59,.94) 0%,rgba(4,78,57,.83) 50%,rgba(13,148,136,.62) 100%)"></div>
+    <div class="wrap reveal" style="position:relative;z-index:2;padding:70px 20px;max-width:680px;margin:0 auto;text-align:center">
+      <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.14);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:13px;font-weight:600;padding:8px 16px;border-radius:999px;margin-bottom:20px">📘 Guide complet</div>
+      <h1 style="font-family:'Poppins';font-size:clamp(30px,5vw,46px);font-weight:800;line-height:1.12;letter-spacing:-.5px;margin-bottom:16px;text-shadow:0 2px 30px rgba(0,0,0,.3)">Comment fonctionne la <span style="background:linear-gradient(120deg,var(--gold-light),#fff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">VAD</span></h1>
+      <p style="font-size:17px;opacity:.95;line-height:1.7;max-width:560px;margin:0 auto;text-shadow:0 1px 12px rgba(0,0,0,.3)">Découvrez le système simple et transparent qui unit nos membres autour du FLCP, du parrainage et de l'AIP.</p>
+    </div>
+  </section>
   <section class="section"><div class="wrap">
     <div style="text-align:center;margin-bottom:34px"><div class="badge badge-green">Guide</div><h1 style="font-size:32px;color:var(--green-900);margin-top:10px">Comment fonctionne la VAD</h1></div>
     <div class="grid grid-2" style="margin-bottom:24px">
@@ -525,6 +534,15 @@ async function viewJoin(params){
   }
   const settings = await api('/misc/settings');
   return publicHeader('/join')+`
+  <section style="position:relative;overflow:hidden;color:#fff;display:flex;align-items:center;min-height:58vh">
+    <div style="position:absolute;inset:0;background-image:url('/images/rejoindre.jpg');background-size:cover;background-position:center"></div>
+    <div style="position:absolute;inset:0;background:linear-gradient(115deg,rgba(6,78,59,.94) 0%,rgba(4,78,57,.83) 50%,rgba(13,148,136,.62) 100%)"></div>
+    <div class="wrap reveal" style="position:relative;z-index:2;padding:70px 20px;max-width:680px;margin:0 auto;text-align:center">
+      <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.14);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:13px;font-weight:600;padding:8px 16px;border-radius:999px;margin-bottom:20px">🤝 Devenir membre</div>
+      <h1 style="font-family:'Poppins';font-size:clamp(30px,5vw,46px);font-weight:800;line-height:1.12;letter-spacing:-.5px;margin-bottom:16px;text-shadow:0 2px 30px rgba(0,0,0,.3)">Rejoignez la <span style="background:linear-gradient(120deg,var(--gold-light),#fff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">VAD</span></h1>
+      <p style="font-size:17px;opacity:.95;line-height:1.7;max-width:560px;margin:0 auto;text-shadow:0 1px 12px rgba(0,0,0,.3)">Devenez membre et contribuez à la lutte contre la pauvreté. Un responsable validera votre adhésion.</p>
+    </div>
+  </section>
   <section class="section"><div class="wrap" style="max-width:760px">
     <div style="text-align:center;margin-bottom:24px"><div class="badge badge-gold">Adhésion</div><h1 style="font-size:30px;color:var(--green-900);margin-top:10px">Rejoignez la VAD</h1><p class="slate">Remplissez ce formulaire. Un responsable validera votre adhésion.</p></div>
     ${sponsorCode?`<div class="alert alert-success" style="margin-bottom:20px">🎉 Vous avez été invité par le parrain <b class="mono">${esc(sponsorCode)}</b>. Bienvenue dans le réseau VAD !</div>`:''}

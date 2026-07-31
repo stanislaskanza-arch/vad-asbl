@@ -71,4 +71,70 @@ router.get('/public-stats', async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// GET /payment-info — coordonnées de paiement + texte de motivation (page publique "Cotiser")
+router.get('/payment-info', async (req, res) => {
+  try {
+    const rows = await req.prisma.setting.findMany({ where: { OR: [{ key: { startsWith: 'payment.' } }, { key: 'flcp.monthly_amount' }] } });
+    const info = {};
+    rows.forEach(r => { info[r.key] = r.value; });
+    const defaults = {
+      'payment.bank_name': 'RAWBANK',
+      'payment.bank_account_name': 'ASBL VAD — Vision d\'Assistance et de Développement',
+      'payment.bank_account_number': '00000 00000 0000000000000',
+      'payment.bank_swift': 'RAWSRDCD',
+      'payment.mpesa_number': '+243 000 000 000',
+      'payment.mpesa_merchant': 'VAD000',
+      'payment.orange_number': '+243 000 000 000',
+      'payment.orange_merchant': 'VAD',
+      'payment.airtel_number': '+243 000 000 000',
+      'payment.airtel_merchant': 'VAD',
+    };
+    Object.keys(defaults).forEach(k => { if (!info[k]) info[k] = defaults[k]; });
+    info['flcp.monthly_amount'] = info['flcp.monthly_amount'] || '5000';
+    res.json(info);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// POST /declare-payment — un membre déclare son paiement en ligne (cotisation en attente)
+router.post('/declare-payment', async (req, res) => {
+  try {
+    const { membershipNumber, contributionTypeCode = 'FLCP-MENSUEL', amount, paymentMethod, transactionRef, period, notes } = req.body;
+    if (!membershipNumber || !amount || !paymentMethod) {
+      return res.status(400).json({ error: 'Numéro de membre, montant et moyen de paiement sont requis' });
+    }
+    const member = await req.prisma.member.findUnique({ where: { membershipNumber } });
+    if (!member) return res.status(404).json({ error: 'Numéro de membre introuvable. Vérifiez votre numéro (ex: VAD-2026-000001).' });
+    const contributionType = await req.prisma.contributionType.findUnique({ where: { code: contributionTypeCode } });
+    if (!contributionType) return res.status(404).json({ error: 'Type de cotisation inconnu' });
+    const year = new Date().getFullYear();
+    const count = await req.prisma.contribution.count();
+    const receiptNumber = `RECU-${year}-${String(count + 1).padStart(6, '0')}`;
+    const contribution = await req.prisma.contribution.create({
+      data: {
+        memberId: member.id,
+        contributionTypeId: contributionType.id,
+        amount: Number(amount),
+        currency: contributionType.currency || 'CDF',
+        paymentDate: new Date(),
+        periodStart: period ? new Date(period + '-01') : null,
+        paymentMethodId: paymentMethod,
+        status: 'pending', // en attente de validation par l'administrateur
+        aipGenerated: false,
+        receiptNumber,
+        reference: transactionRef ? `Déclaration en ligne — réf: ${transactionRef}` : 'Déclaration en ligne',
+        notes: notes || `Paiement déclaré par le membre en ligne (${paymentMethod})`,
+        recordedBy: member.membershipNumber,
+      },
+      include: { contributionType: true },
+    });
+    res.status(201).json({
+      receiptNumber: contribution.receiptNumber,
+      status: 'pending',
+      amount: contribution.amount,
+      message: `Votre paiement de ${Number(amount).toLocaleString('fr-FR')} ${contribution.currency} a bien été déclaré. ` +
+        `Reçu ${receiptNumber}. Il sera validé par le Responsable des Finances sous 24-48h. L'AIP de votre parrain sera crédité après validation.`,
+    });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 module.exports = router;

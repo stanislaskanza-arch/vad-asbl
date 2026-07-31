@@ -159,6 +159,25 @@
   .footer-link:hover{text-decoration:underline}
   .spinner{display:inline-block;width:18px;height:18px;border:2.5px solid var(--green-100);border-top-color:var(--green-600);border-radius:50%;animation:sp .7s linear infinite}
 
+  /* ===== SLIDER / CARROUSEL ===== */
+  .slider{position:relative;border-radius:20px;overflow:hidden;box-shadow:var(--shadow-lg);max-width:920px;margin:0 auto}
+  .slider-track{display:flex;transition:transform .7s cubic-bezier(.4,0,.2,1)}
+  .slide{min-width:100%;position:relative}
+  .slide img{width:100%;height:400px;object-fit:cover;display:block}
+  @media(max-width:880px){.slide img{height:240px}}
+  .slide-caption{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(6,78,59,.95));color:#fff;padding:60px 32px 30px}
+  @media(max-width:880px){.slide-caption{padding:30px 18px 18px}}
+  .slide-caption h3{font-family:'Poppins';font-size:24px;margin-bottom:6px;font-weight:700;text-shadow:0 2px 12px rgba(0,0,0,.4)}
+  @media(max-width:880px){.slide-caption h3{font-size:17px}}
+  .slide-caption p{font-size:14px;opacity:.92;text-shadow:0 1px 8px rgba(0,0,0,.4)}
+  .slider-arrow{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.92);border:none;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;z-index:5;box-shadow:0 4px 16px rgba(0,0,0,.25);transition:.2s;color:var(--green-900)}
+  .slider-arrow:hover{background:#fff;transform:translateY(-50%) scale(1.08)}
+  .slider-arrow.prev{left:16px}.slider-arrow.next{right:16px}
+  @media(max-width:880px){.slider-arrow{width:38px;height:38px;font-size:18px}.slider-arrow.prev{left:8px}.slider-arrow.next{right:8px}}
+  .slider-dots{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:5}
+  .slider-dot{width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,.5);border:none;cursor:pointer;transition:.3s;padding:0}
+  .slider-dot.active{background:var(--gold-light);width:30px;border-radius:6px}
+
   /* ===== OPTIMISATION MOBILE ===== */
   .hamburger{display:none;background:none;border:none;cursor:pointer;width:44px;height:44px;border-radius:10px;align-items:center;justify-content:center;font-size:24px;color:var(--green-800)}
   .hamburger:hover{background:rgba(5,150,105,.1)}
@@ -483,7 +502,22 @@ async function viewHome(){
         <div style="margin-top:18px"><a class="btn btn-ghost" style="background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.35)" href="#/cotiser">💳 Cotiser en ligne</a></div>
       </div>
     </section>`;
-  return publicHeader('/')+hero+steps+impact+cta+publicFooter();
+  const gallery = `
+    <section class="section" style="background:linear-gradient(180deg,#f8fafc,#fff)"><div class="wrap">
+      <div style="text-align:center;margin-bottom:32px" class="reveal"><div class="badge badge-green">La VAD en action</div><h2 style="font-size:clamp(26px,4vw,32px);color:var(--green-900);margin-top:10px;font-weight:800">Nos valeurs, notre impact</h2></div>
+      <div class="slider" id="vadSlider">
+        <button class="slider-arrow prev" id="sliderPrev" aria-label="Precedent">‹</button>
+        <button class="slider-arrow next" id="sliderNext" aria-label="Suivant">›</button>
+        <div class="slider-track" id="sliderTrack">
+          <div class="slide"><img src="/images/hero-solidarite.jpg" alt="Solidarite"/><div class="slide-caption"><h3>La solidarite au coeur de notre action</h3><p>Des milliers de membres unis pour un meme ideal a travers la RDC.</p></div></div>
+          <div class="slide"><img src="/images/section-developpement.jpg" alt="Developpement"/><div class="slide-caption"><h3>Le developpement de nos communautes</h3><p>Des projets concrets dans toutes les provinces du pays.</p></div></div>
+          <div class="slide"><img src="/images/cotiser-paiement.jpg" alt="Cotisation"/><div class="slide-caption"><h3>Cotisez en ligne en 1 minute</h3><p>M-Pesa, Orange Money, Airtel Money ou compte bancaire.</p></div></div>
+          <div class="slide"><img src="/images/cta-espoir.jpg" alt="Espoir"/><div class="slide-caption"><h3>L'espoir d'un avenir meilleur</h3><p>Chaque geste compte dans la lutte contre la pauvrete.</p></div></div>
+        </div>
+        <div class="slider-dots" id="sliderDots"></div>
+      </div>
+    </div></section>`;
+  return publicHeader('/')+hero+steps+gallery+impact+cta+publicFooter();
 }
 
 // KPI version glassmorphism (fond sombre)
@@ -763,6 +797,7 @@ async function viewNewMember(){
 
 /* ---------- Finances ---------- */
 let finTab = 'flcp';
+let sliderTimer = null, sliderIdx = 0;
 async function viewFinances(){
   return adminShell('/admin/finances', (async()=>{
     const tabs = [['flcp','💵 Cotisation FLCP'],['report','📊 Rapports RF-VAD'],['aip','💰 Comptes AIP'],['tiers','🎁 Tiers (Sub/Don/Leg)']];
@@ -1025,6 +1060,8 @@ function afterRender(){
   // cotisation en ligne
   const df=$('#declareForm'); if(df) df.onsubmit=handleDeclarePayment;
   const pms=$('#payMethodSel'); if(pms) pms.onchange=showPayInstruction;
+  // slider carrousel (page accueil)
+  if($('#vadSlider')) initSlider();
   // menus hamburger mobile
   const pb=$('#publicBurger'); const nm=$('#navMobile'); const nbk=$('#navBackdrop');
   if(pb){ pb.onclick=()=>{ nm.classList.toggle('show'); nbk.classList.toggle('show'); };
@@ -1127,6 +1164,31 @@ async function handleRefSelect(e){
 /* ============================================================
    DÉMARRAGE
    ============================================================ */
+// Initialisation du carrousel d'images (page d'accueil)
+function initSlider(){
+  const track = $('#sliderTrack'); const dotsBox = $('#sliderDots');
+  if(!track) return;
+  const slides = track.children.length;
+  if(sliderTimer){ clearInterval(sliderTimer); sliderTimer=null; }
+  sliderIdx = 0;
+  dotsBox.innerHTML = '';
+  for(let i=0;i<slides;i++){
+    const dot = document.createElement('button');
+    dot.className = 'slider-dot' + (i===0?' active':'');
+    dot.onclick = ()=>goSlide(i);
+    dotsBox.appendChild(dot);
+  }
+  function goSlide(i){
+    sliderIdx = (i+slides)%slides;
+    track.style.transform = 'translateX(-'+sliderIdx*100+'%)';
+    dotsBox.querySelectorAll('.slider-dot').forEach((d,k)=>d.classList.toggle('active',k===sliderIdx));
+  }
+  const prev=$('#sliderPrev'), next=$('#sliderNext');
+  if(prev) prev.onclick=()=>{ goSlide(sliderIdx-1); resetTimer(); };
+  if(next) next.onclick=()=>{ goSlide(sliderIdx+1); resetTimer(); };
+  function resetTimer(){ clearInterval(sliderTimer); sliderTimer=setInterval(()=>goSlide(sliderIdx+1),5000); }
+  resetTimer();
+}
 dispatch();
 </script>
 </body>

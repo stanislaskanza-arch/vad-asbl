@@ -313,7 +313,7 @@ function shareButtons(links){
    VUES PUBLIQUES
    ============================================================ */
 function publicHeader(active){
-  const links = [['Accueil','/'],['Comment ça marche','/how'],['Rejoindre','/join'],['Espace admin','/login']];
+  const links = [['Accueil','/'],['Comment ça marche','/how'],['Cotiser','/cotiser'],['Rejoindre','/join'],['Espace admin','/login']];
   return `<header class="site-header"><div class="wrap">
     <a class="brand" href="#/">${logo(44)}<div class="brand-text"><b>VAD</b><span>Vision d'Assistance et de Développement</span></div></a>
     <nav class="nav-links">${links.map(l=>`<a class="${active===l[1]?'footer-link':''}" href="#${l[1]}">${l[0]}</a>`).join('')}</nav>
@@ -770,6 +770,65 @@ async function viewForecasts(){
   })());
 }
 
+/* ---------- Cotiser en ligne ---------- */
+const FLCP_AMT = 5000;
+async function viewCotiser(){
+  let info = {};
+  try { info = await api('/misc/payment-info'); } catch(e){}
+  const now = new Date();
+  const periodVal = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const motivation = `Votre cotisation est l'élan qui transforme des vies. Chaque <b>${fmt(FLCP_AMT)} CDF</b> versé au FLCP finance concrètement la lutte contre la pauvreté : aide médicale, funéraire, scolarité, alimentaire et micro-crédit. Cotiser en ligne, c'est <b>simple, rapide et solidaire</b> — réglez depuis votre téléphone en 1 minute, sans déplacement. Et n'oubliez pas : <b>30% de votre cotisation est reversé au compte AIP de votre parrain</b>. Votre geste fait grandir tout le réseau VAD.`;
+  const methods = [
+    { id:'bank', icon:'🏦', name:'Compte Bancaire', color:'#2563eb', title:'Virement bancaire',
+      lines:[`Banque : <b>${esc(info['payment.bank_name'])}</b>`,`Titulaire : <b>${esc(info['payment.bank_account_name'])}</b>`,`N° de compte (RIB) : <b class="mono">${esc(info['payment.bank_account_number'])}</b>`,`Code SWIFT/BIC : <b class="mono">${esc(info['payment.bank_swift'])}</b>`] },
+    { id:'mpesa', icon:'📱', name:'M-Pesa', color:'#d40000', title:'Vodacom M-Pesa',
+      lines:[`Numéro M-Pesa : <b class="mono">${esc(info['payment.mpesa_number'])}</b>`,`Code marchand : <b class="mono">${esc(info['payment.mpesa_merchant'])}</b>`,`Envoi d'argent → saisissez le numéro et le montant`] },
+    { id:'orange', icon:'🟠', name:'Orange Money', color:'#ff7900', title:'Orange Money',
+      lines:[`Numéro Orange Money : <b class="mono">${esc(info['payment.orange_number'])}</b>`,`Code marchand : <b class="mono">${esc(info['payment.orange_merchant'])}</b>`,`Transfert d'argent → numéro et montant`] },
+    { id:'airtel', icon:'🔴', name:'Airtel Money', color:'#e40000', title:'Airtel Money',
+      lines:[`Numéro Airtel Money : <b class="mono">${esc(info['payment.airtel_number'])}</b>`,`Code marchand : <b class="mono">${esc(info['payment.airtel_merchant'])}</b>`,`Envoi d'argent → numéro et montant`] },
+  ];
+  const hero = `<section class="hero"><div class="wrap" style="grid-template-columns:1fr;text-align:center">
+    <div class="badge badge-gold" style="margin-bottom:16px">💳 Cotisation FLCP en ligne</div>
+    <h1>Cotisez en ligne, luttons contre la pauvreté</h1>
+    <p class="lead" style="margin:0 auto 22px">${motivation}</p>
+    <a class="btn btn-gold" href="#declare">Déclarer mon paiement →</a>
+  </div></section>`;
+  const cards = `<section class="section"><div class="wrap">
+    <div style="text-align:center;margin-bottom:30px"><div class="badge badge-green">Moyens de paiement</div><h2 style="font-size:28px;color:var(--green-900);margin-top:10px">4 façons simples de cotiser</h2></div>
+    <div class="grid grid-4">${methods.map(m=>`<div class="card" style="padding:22px;border-top:4px solid ${m.color}">
+      <div style="font-size:34px;margin-bottom:8px">${m.icon}</div>
+      <h3 style="font-size:16px;margin-bottom:6px">${m.name}</h3>
+      <div class="badge badge-gray" style="margin-bottom:12px">${m.title}</div>
+      <div style="font-size:13px;line-height:1.9;color:var(--slate)">${m.lines.map(l=>`<div>${l}</div>`).join('')}</div>
+    </div>`).join('')}</div>
+    <div class="card" style="padding:20px;margin-top:18px;background:#fffbeb;border:1px solid #fde68a">
+      <p style="font-size:14px;color:#92400e">⚠️ <b>Important :</b> les coordonnées ci-dessus sont des <b>exemples</b>. Le Responsable des Finances de la VAD doit mettre à jour les vrais numéros de compte et de Mobile Money dans les paramètres de l'application.</p>
+    </div>
+  </div></section>`;
+  const form = `<section class="section" id="declare" style="background:#fff"><div class="wrap" style="max-width:760px">
+    <div style="text-align:center;margin-bottom:24px"><div class="badge badge-gold">Déclaration</div><h2 style="font-size:26px;color:var(--green-900);margin-top:10px">Déclarer mon paiement</h2><p class="slate">Après avoir effectué le paiement sur votre téléphone ou en banque, déclarez-le ici pour générer votre reçu.</p></div>
+    <div class="card" style="padding:28px">
+      <div id="payMsg"></div>
+      <form id="declareForm">
+        <div class="grid grid-2">
+          <div class="field"><label class="label">Votre numéro de membre *</label><input class="input" name="membershipNumber" placeholder="VAD-2026-000001" required></div>
+          <div class="field"><label class="label">Type de cotisation</label><select class="select" name="contributionTypeCode"><option value="FLCP-MENSUEL">FLCP mensuel (5000 CDF)</option><option value="DON-VOLONTAIRE">Don volontaire</option><option value="COTIS-ANNUELLE">Cotisation annuelle</option></select></div>
+          <div class="field"><label class="label">Montant (CDF) *</label><input class="input" name="amount" type="number" value="5000" min="100" required></div>
+          <div class="field"><label class="label">Période (mois)</label><input class="input" name="period" type="month" value="${periodVal}"></div>
+          <div class="field"><label class="label">Moyen de paiement utilisé *</label><select class="select" name="paymentMethod" id="payMethodSel" required><option value="">— Choisir —</option><option value="bank_transfer">🏦 Compte bancaire</option><option value="mpesa">📱 M-Pesa</option><option value="orange_money">🟠 Orange Money</option><option value="airtel_money">🔴 Airtel Money</option></select></div>
+          <div class="field"><label class="label">Référence / Code de transaction</label><input class="input" name="transactionRef" placeholder="ex: code SMS reçu après paiement"></div>
+        </div>
+        <div class="field"><label class="label">Notes (facultatif)</label><input class="input" name="notes" placeholder="Toute précision utile"></div>
+        <div id="payInstruction" style="display:none;margin-bottom:16px"></div>
+        <button class="btn btn-primary" type="submit" style="width:100%;justify-content:center">✅ Déclarer mon paiement</button>
+      </form>
+    </div>
+    <div class="card" style="padding:18px;margin-top:16px;background:#f0fdf4;border:1px solid var(--green-100)"><p class="slate" style="font-size:13.5px">ℹ️ Après déclaration, votre paiement est en <b>attente de validation</b> par le Responsable des Finances (24-48h). Une fois validé, l'AIP de 30% est automatiquement crédité à votre parrain.</p></div>
+  </div></section>`;
+  return publicHeader('/cotiser')+hero+cards+form+publicFooter();
+}
+
 function notFound(){ return publicHeader('/')+`<div class="wrap section" style="text-align:center"><h1 style="font-size:40px;color:var(--green-900)">404</h1><p class="slate">Page introuvable.</p><a class="btn btn-primary" href="#/" style="margin-top:16px">← Accueil</a></div>`+publicFooter(); }
 
 /* ============================================================
@@ -779,6 +838,7 @@ r('/', viewHome);
 r('/how', viewHow);
 r('/join', viewJoin);
 r('/join/:code', viewJoin);
+r('/cotiser', viewCotiser);
 r('/login', viewLogin);
 r('/admin', viewDashboard);
 r('/admin/members', viewMembers);
@@ -821,6 +881,9 @@ function afterRender(){
   const tf=$('#tiersForm'); if(tf) tf.onsubmit=handleTiers;
   // parrainage select
   const rfs=$('#refMember'); if(rfs) rfs.onchange=handleRefSelect;
+  // cotisation en ligne
+  const df=$('#declareForm'); if(df) df.onsubmit=handleDeclarePayment;
+  const pms=$('#payMethodSel'); if(pms) pms.onchange=showPayInstruction;
 }
 function toggleRepSelects(){
   const p=$('#repPeriod'); if(!p) return;
@@ -847,6 +910,42 @@ async function handleLogin(e){ e.preventDefault(); const f=new FormData(e.target
   catch(err){ msg.innerHTML=`<div class="alert alert-error">⚠️ ${esc(err.message)}</div>`; btn.disabled=false; btn.textContent=old; }
 }
 function handleJoin(e){ e.preventDefault(); const msg=$('#joinMsg'); msg.innerHTML=`<div class="alert alert-success">🎉 Merci ! Votre demande d'adhésion a bien été enregistrée.<br><br>Un responsable de la VAD vous contactera sous peu pour finaliser votre inscription (numéro de membre, FLCP et lien de parrainage). 📞</div>`; e.target.reset(); window.scrollTo({top:0,behavior:'smooth'}); }
+
+// Instructions dynamiques selon le moyen de paiement choisi
+function showPayInstruction(){
+  const sel=$('#payMethodSel'); const zone=$('#payInstruction'); if(!sel||!zone) return;
+  const m = sel.value;
+  if(!m){ zone.style.display='none'; return; }
+  const labels = { bank_transfer:'🏦 Virement bancaire', mpesa:'📱 M-Pesa', orange_money:'🟠 Orange Money', airtel_money:'🔴 Airtel Money' };
+  const numSel = { bank_transfer:'payment.bank_account_number', mpesa:'payment.mpesa_number', orange_money:'payment.orange_number', airtel_money:'payment.airtel_number' };
+  zone.style.display='block';
+  zone.innerHTML = `<div class="alert" style="background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af"><b>${labels[m]}</b><br>Effectuez le paiement vers le numéro/compte indiqué ci-dessus, puis saisissez ci-dessous le <b>code de transaction</b> reçu par SMS. Conservez ce code comme preuve.</div>`;
+}
+
+async function handleDeclarePayment(e){
+  e.preventDefault();
+  const f=new FormData(e.target);
+  const data={
+    membershipNumber: f.get('membershipNumber'),
+    contributionTypeCode: f.get('contributionTypeCode'),
+    amount: f.get('amount'),
+    period: f.get('period'),
+    paymentMethod: f.get('paymentMethod'),
+    transactionRef: f.get('transactionRef'),
+    notes: f.get('notes'),
+  };
+  const msg=$('#payMsg'); const btn=e.target.querySelector('button[type=submit]'); const old=btn.textContent;
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Envoi…';
+  try{
+    const r=await api('/misc/declare-payment',{method:'POST',body:JSON.stringify(data)});
+    msg.innerHTML=`<div class="alert alert-success">✅ ${esc(r.message)}</div>`;
+    e.target.reset(); $('#payInstruction').style.display='none';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }catch(err){
+    msg.innerHTML=`<div class="alert alert-error">⚠️ ${esc(err.message)}</div>`;
+  }
+  btn.disabled=false; btn.textContent=old;
+}
 async function handleMemberCreate(e){ e.preventDefault(); const f=new FormData(e.target); const data={}; f.forEach((v,k)=>{ if(v)data[k]=v; }); const msg=$('#formMsg'); const btn=e.target.querySelector('button[type=submit]'); const old=btn.textContent; btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Création…';
   try{ const m=await api('/members',{method:'POST',body:JSON.stringify(data)}); msg.innerHTML=`<div class="alert alert-success">✅ Membre créé : <b>${esc(m.firstName)} ${esc(m.lastName)}</b> (${esc(m.membershipNumber)}) — compte AIP et lien de parrainage générés.</div>`; e.target.reset(); setTimeout(()=>{ location.hash='/admin/members/'+m.id; },1200); }
   catch(err){ msg.innerHTML=`<div class="alert alert-error">⚠️ ${esc(err.message)}</div>`; }

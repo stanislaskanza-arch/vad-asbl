@@ -122,8 +122,17 @@
   .sidebar .sb-brand{padding:22px 20px;border-bottom:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:10px}
   .sidebar .sb-brand b{color:#fff;font-size:16px}
   .sidebar .sb-brand span{font-size:10.5px;color:var(--gold-light)}
-  .nav-section{padding:14px 12px}
-  .nav-section .ttl{font-size:10.5px;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.45);padding:8px 12px;font-weight:700}
+  .nav-section{padding:6px 10px}
+  .nav-section .ttl{font-size:10.5px;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.4);padding:8px 12px;font-weight:700}
+  .nav-group-header{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-radius:10px;font-size:13.5px;font-weight:700;color:#e2e8f0;cursor:pointer;transition:.2s;margin-bottom:2px;letter-spacing:.3px}
+  .nav-group-header:hover{background:rgba(255,255,255,.08)}
+  .nav-group-header .gh-left{display:flex;align-items:center;gap:9px}
+  .nav-group-header .gh-ico{font-size:16px}
+  .nav-group-header .gh-caret{font-size:11px;transition:transform .25s;color:rgba(255,255,255,.5)}
+  .nav-group-header.open .gh-caret{transform:rotate(180deg)}
+  .nav-group-items{overflow:hidden;max-height:0;transition:max-height .3s ease;opacity:0}
+  .nav-group-items.open{max-height:400px;opacity:1;transition:max-height .4s ease,opacity .3s ease .1s}
+  .nav-group-items .nav-item{padding-left:22px}
   .nav-item{display:flex;align-items:center;gap:11px;padding:11px 14px;border-radius:10px;font-size:14px;color:#cbd5e1;cursor:pointer;font-weight:500;transition:.2s;margin-bottom:2px}
   .nav-item:hover{background:rgba(255,255,255,.1);color:#fff;transform:translateX(3px)}
   .nav-item.active{background:linear-gradient(135deg,rgba(212,175,55,.25),rgba(212,175,55,.12));color:#fff;box-shadow:inset 3px 0 0 var(--gold)}
@@ -753,14 +762,21 @@ async function viewLogin(){
    ============================================================ */
 async function adminShell(active, contentPromise){
   const nav = [
-    {s:'main', items:[['Tableau de bord','/admin','📊'],['Membres','/admin/members','👥'],['Finances','/admin/finances','💰']]},
-    {s:'réseau', items:[['Parrains & Arbre','/admin/sponsors','🌳'],['Parrainage & Liens','/admin/referrals','🔗'],['Projections','/admin/forecasts','📈']]},{s:'contenu', items:[['Images du site','/admin/contenu/images','🖼️'],['Textes du site','/admin/contenu/textes','📝']]},
+    { items:[['Tableau de bord','/admin','📊']] },
+    { s:'Gestion', icon:'🗂️', items:[['Membres','/admin/members','👥'],['Finances','/admin/finances','💰']]},
+    { s:'Réseau & Parrainage', icon:'🌐', items:[['Parrains & Arbre','/admin/sponsors','🌳'],['Parrainage & Liens','/admin/referrals','🔗'],['Projections','/admin/forecasts','📈']]},
+    { s:'Contenu du site', icon:'🎨', items:[['Images du site','/admin/contenu/images','🖼️'],['Textes du site','/admin/contenu/textes','📝']]},
   ];
   const sidebar = `<aside class="sidebar" id="adminSidebar">
     <div class="sb-brand">${logo(34)}<div><b>VAD Admin</b><br><span>${esc(state.user?.role||'')}</span></div></div>
-    ${nav.map(sec=>`<div class="nav-section"><div class="ttl">${sec.s}</div>${sec.items.map(it=>`<a class="nav-item ${active===it[1]?'active':''}" href="#${it[1]}"><span class="ic">${it[2]}</span>${it[0]}</a>`).join('')}</div>`).join('')}
+    ${nav.map(sec=>{
+      if(!sec.s){ return '<div class="nav-section">'+sec.items.map(it=>'<a class="nav-item '+(active===it[1]?'active':'')+'" href="#'+it[1]+'"><span class="ic">'+it[2]+'</span>'+it[0]+'</a>').join('')+'</div>'; }
+      const hasActive = sec.items.some(it=>active===it[1]);
+      return '<div class="nav-section"><div class="nav-group-header '+(hasActive?'open':'')+'" data-grp="'+sec.s+'"><span class="gh-left"><span class="gh-ico">'+sec.icon+'</span>'+sec.s+'</span><span class="gh-caret">▼</span></div><div class="nav-group-items '+(hasActive?'open':'')+'">'+sec.items.map(it=>'<a class="nav-item '+(active===it[1]?'active':'')+'" href="#'+it[1]+'"><span class="ic">'+it[2]+'</span>'+it[0]+'</a>').join('')+'</div></div>';
+    }).join('')}
     <div class="nav-section"><div class="nav-item" id="logoutBtn" style="cursor:pointer;color:#fca5a5"><span class="ic">🚪</span>Déconnexion</div></div>
   </aside>`;
+
   let content = loading('Chargement…');
   const main = `<div class="main-area"><div id="adminContent">${content}</div></div>`;
   const html = `<div class="admin">${sidebar}${main}</div>`;
@@ -1392,6 +1408,8 @@ r('/admin/contenu/textes', viewContentTexts);
    ÉVÉNEMENTS (délégution après rendu)
    ============================================================ */
 function afterRender(){
+  // accordéon sidebar admin
+  $(".nav-group-header").forEach(function(h){ h.onclick=function(){ h.classList.toggle("open"); if(h.nextElementSibling) h.nextElementSibling.classList.toggle("open"); }; });
   // logout
   const lo = $('#logoutBtn'); if(lo) lo.onclick = logout;
   // devise

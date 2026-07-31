@@ -23,6 +23,7 @@ app.use('/api/sponsors', require('./routes/sponsors'));
 app.use('/api/referrals', require('./routes/referrals'));
 app.use('/api/forecasts', require('./routes/forecasts'));
 app.use('/api/misc', require('./routes/misc'));
+app.use('/api/content', require('./routes/content'));
 
 // Frontend intégré
 app.use(express.static(path.join(__dirname, '../public')));

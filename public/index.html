@@ -1123,21 +1123,18 @@ async function viewPresident(){
 async function viewMission(){
   return publicHeader('/mission')+missionHero('hero-solidarite.jpg','Notre Mission','','','Ce qui nous anime au quotidien dans la lutte contre la pauvrete.')+`
   <section class="section"><div class="wrap" style="max-width:900px">
-    <div class="grid grid-3" style="margin-bottom:24px">
-      <div class="card step reveal"><div class="ico">🎯</div><h3>Notre Mission</h3><p>Lutter contre la pauvrete en Afrique sub-saharienne a travers un fonds commun solidaire (FLCP), le parrainage et l'assistance programmee (AIP).</p></div>
-      <div class="card step reveal" style="animation-delay:.1s"><div class="ico">👁️</div><h3>Notre Vision</h3><p>Un continent ou chaque famille accede a la dignite, a l'education, a la sante et a l'autonomie economique grace a la solidarite.</p></div>
-      <div class="card step reveal" style="animation-delay:.2s"><div class="ico">💚</div><h3>Nos Valeurs</h3><p>Solidarite, transparence, engagement, entraide et developpement durable au service des communautes les plus vulnerables.</p></div>
+    <div class="card reveal" style="padding:34px;background:linear-gradient(135deg,#f0fdf4,#fff);border-left:4px solid var(--green-600);margin-bottom:34px">
+      <div style="font-size:11px;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Notre Mission</div>
+      <p style="font-size:18px;line-height:1.8;color:var(--ink)"><b>Vision d'Assistance et de Developpement (VAD)</b> a pour mission principale <b style="color:var(--green-700)">la lutte contre la pauvrete</b>. Cette lutte passe par l'ensemble d'activites que l'ASBL VAD organise.</p>
     </div>
-    <div class="card reveal" style="padding:30px;background:linear-gradient(135deg,#f0fdf4,#fff);border-left:4px solid var(--green-600)">
-      <h3 style="color:var(--green-900);font-size:20px;margin-bottom:14px">Nos axes d'intervention</h3>
-      <div class="grid grid-2">
-        <div class="stat-row"><span>🌱 Vulgarisation du programme FLCP</span><b>✓</b></div>
-        <div class="stat-row"><span>🤝 Recrutement de volontaires engagés</span><b>✓</b></div>
-        <div class="stat-row"><span>📚 Formation des membres</span><b>✓</b></div>
-        <div class="stat-row"><span>🩺 Assistance aux démunis</span><b>✓</b></div>
-        <div class="stat-row"><span>🎓 Encadrement des jeunes</span><b>✓</b></div>
-        <div class="stat-row"><span>🏗️ Projets de développement</span><b>✓</b></div>
-      </div>
+    <div style="text-align:center;margin-bottom:30px" class="reveal"><div class="badge badge-green">Nos Activites</div><h2 style="font-size:clamp(24px,4vw,30px);color:var(--green-900);margin-top:10px;font-weight:800">Nos axes d'intervention</h2></div>
+    <div class="grid grid-2">
+      <div class="card reveal" style="padding:24px"><div style="display:flex;gap:14px;align-items:flex-start"><div style="font-size:30px">📢</div><div style="flex:1"><h3 style="font-size:17px;color:var(--green-900);margin-bottom:4px">Vulgarisation du programme VAD</h3><p class="slate" style="font-size:14px;margin-bottom:10px">Sensibilisation et diffusion du programme de lutte contre la pauvrete.</p><a href="#/how" class="footer-link">→ En savoir plus</a></div></div></div>
+      <div class="card reveal" style="padding:24px;animation-delay:.05s"><div style="display:flex;gap:14px;align-items:flex-start"><div style="font-size:30px">🤝</div><div style="flex:1"><h3 style="font-size:17px;color:var(--green-900);margin-bottom:4px">Recrutement des volontaires</h3><p class="slate" style="font-size:14px;margin-bottom:10px">Mobilisation de volontaires engages pour la cause.</p><a href="#/join" class="footer-link">→ Formulaire d'adhesion</a></div></div></div>
+      <div class="card reveal" style="padding:24px;animation-delay:.1s"><div style="display:flex;gap:14px;align-items:flex-start"><div style="font-size:30px">📚</div><div style="flex:1"><h3 style="font-size:17px;color:var(--green-900);margin-bottom:4px">Formation des Membres</h3><p class="slate" style="font-size:14px;margin-bottom:10px">Renforcement des capacites et competences des membres.</p><a href="#/contact" class="footer-link">→ En savoir plus</a></div></div></div>
+      <div class="card reveal" style="padding:24px;animation-delay:.15s"><div style="display:flex;gap:14px;align-items:flex-start"><div style="font-size:30px">🤲</div><div style="flex:1"><h3 style="font-size:17px;color:var(--green-900);margin-bottom:4px">Assistance des demunis</h3><p class="slate" style="font-size:14px;margin-bottom:10px">Soutien concret aux personnes dans le besoin.</p><a href="#/cotiser" class="footer-link">→ En savoir plus</a></div></div></div>
+      <div class="card reveal" style="padding:24px;animation-delay:.2s"><div style="display:flex;gap:14px;align-items:flex-start"><div style="font-size:30px">🎓</div><div style="flex:1"><h3 style="font-size:17px;color:var(--green-900);margin-bottom:4px">Encadrement des jeunes</h3><p class="slate" style="font-size:14px;margin-bottom:10px">Accompagnement et orientation de la jeunesse.</p><a href="#/contact" class="footer-link">→ En savoir plus</a></div></div></div>
+      <div class="card reveal" style="padding:24px;animation-delay:.25s"><div style="display:flex;gap:14px;align-items:flex-start"><div style="font-size:30px">🏗️</div><div style="flex:1"><h3 style="font-size:17px;color:var(--green-900);margin-bottom:4px">Execution des projets VAD</h3><p class="slate" style="font-size:14px;margin-bottom:10px">Projets pour le developpement de l'association et des membres.</p><a href="#/contact" class="footer-link">→ En savoir plus</a></div></div></div>
     </div>
   </div></section>`+publicFooter();
 }

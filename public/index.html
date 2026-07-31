@@ -419,7 +419,7 @@ function shareButtons(links){
    ============================================================ */
 function publicHeader(active){
   const links = [['Cotiser','/cotiser','💳'],['Rejoindre','/join','🤝'],['Contact','/contact','📞'],['Espace admin','/login','🔐']];
-  const missionSub = [['Mot du President National','/mission/president','🗣️'],['Notre Mission','/mission','🎯'],['Comment ca marche','/how','📖'],['Equipe de travail','/mission/equipe','👥'],['Documents administratifs','/mission/documents','📄']];
+  const missionSub = [['Genese de la VAD','/mission/genes','🌱'],['Mot du President National','/mission/president','🗣️'],['Notre Mission','/mission','🎯'],['Comment ca marche','/how','📖'],['Equipe de travail','/mission/equipe','👥'],['Documents administratifs','/mission/documents','📄']];
   const isMission = active && (active.indexOf('/mission')===0 || active==='/how');
   return `<header class="site-header"><div class="wrap">
     <a class="brand" href="#/">${logo(44)}<div class="brand-text"><b>VAD</b><span>Vision d'Assistance et de Developpement</span></div></a>
@@ -1094,6 +1094,25 @@ function missionHero(img, badge, title, gold, subtitle){
   </section>`;
 }
 
+async function viewGenes(){
+  return publicHeader('/mission/genes')+missionHero('hero-solidarite.jpg','Genese de la VAD','','','Comment est nee Vision d Assistance et de Developpement.')+`
+  <section class="section"><div class="wrap" style="max-width:820px">
+    <div class="card reveal" style="padding:40px;box-shadow:var(--shadow-lg);margin-bottom:24px">
+      <div style="font-size:11px;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px">Notre histoire</div>
+      <h2 style="font-family:'Poppins';font-size:24px;color:var(--green-900);font-weight:800;margin-bottom:20px">La genese de VAD</h2>
+      <div style="font-size:16px;line-height:1.9;color:var(--ink)">
+        <p>Tout est parti d'un <b>constat</b> : la pauvrete frappe durement les populations d'Afrique sub-saharienne. Des millions de familles luttent quotidiennement pour acceder aux besoins fondamentaux que sont la sante, l'education, l'alimentation et l'autonomie economique.</p>
+        <p>Face a cette realite, <b>KANZA NZINU Stanislas</b> et un groupe de personnes engagees ont concu une idee : <b>creer une association ou la solidarite deviendrait un veritable levier contre la pauvrete</b>. Plutot que d'attendre des solutions externes, les membres eux-memes uniraient leurs forces et leurs ressources.</p>
+        <p>Ainsi est nee <b>Vision d Assistance et de Developpement (VAD)</b>, une ASBL fondee sur un principe simple et puissant : chaque membre cotise au <b>Fonds pour la Lutte Contre la Pauvrete (FLCP)</b>, et ces fonds financent concretement l assistance, le developpement et l epanouissement de la communaute.</p>
+        <p>Le systeme du <b>parrainage</b> et de l <b>AIP (Assistance Individuelle Programmee)</b> a ete imagine pour que la solidarite soit recompensee : 30% de la cotisation de chaque filleul est reverse a son parrain, creant un cercle vertueux d entraide.</p>
+        <p style="font-size:18px;font-weight:700;color:var(--green-700);text-align:center;margin:28px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:20px 0">« D une simple idee est ne un mouvement.<br/>D un mouvement natra un changement durable. »</p>
+        <p>Aujourd hui, la VAD continue de grandir, province apres province, membre apres membre, porteuse de l espoir d un avenir ou la pauvrete ne sera plus une fatalite, mais un combat que nous menons <b>ensemble</b>.</p>
+      </div>
+    </div>
+    <div class="card reveal" style="padding:20px;background:#fffbeb;border:1px solid #fde68a;text-align:center"><p style="color:#92400e;font-size:14px">Ce texte est une base. Le Coordonnateur National peut fournir le recit exact et officiel de la creation de la VAD (dates, circonstances, fondateurs) pour enrichir cette page.</p></div>
+  </div></section>`+publicFooter();
+}
+
 async function viewPresident(){
   const addr = "Chers membres et partenaires de Vision d'Assistance et de Developpement (VAD),";
   return publicHeader('/mission/president')+missionHero('president.jpg','Mot du President National','','','La vision et lengagement de la VAD dans la lutte contre la pauvrete.')+`
@@ -1185,6 +1204,7 @@ r('/join/:code', viewJoin);
 r('/cotiser', viewCotiser);
 r('/contact', viewContact);
 r('/mission', viewMission);
+r('/mission/genes', viewGenes);
 r('/mission/president', viewPresident);
 r('/mission/equipe', viewEquipe);
 r('/mission/documents', viewDocuments);

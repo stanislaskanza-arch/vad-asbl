@@ -407,7 +407,7 @@ function shareButtons(links){
    VUES PUBLIQUES
    ============================================================ */
 function publicHeader(active){
-  const links = [['Accueil','/'],['Comment ça marche','/how'],['Cotiser','/cotiser'],['Rejoindre','/join'],['Espace admin','/login']];
+  const links = [['Accueil','/'],['Comment ça marche','/how'],['Cotiser','/cotiser'],['Rejoindre','/join'],['Contact','/contact'],['Espace admin','/login']];
   return `<header class="site-header"><div class="wrap">
     <a class="brand" href="#/">${logo(44)}<div class="brand-text"><b>VAD</b><span>Vision d'Assistance et de Développement</span></div></a>
     <nav class="nav-links">${links.map(l=>`<a class="${active===l[1]?'footer-link':''}" href="#${l[1]}">${l[0]}</a>`).join('')}</nav>
@@ -421,7 +421,8 @@ function publicFooter(){
     <div><div style="display:flex;gap:10px;align-items:center;margin-bottom:12px">${logo(40)}<div><b style="color:#fff;font-size:16px">VAD</b><div style="font-size:11px;color:var(--gold-light)">Vision d'Assistance et de Développement</div></div></div>
       <p style="font-size:13.5px;max-width:340px">ASBL engagée dans la lutte contre la pauvreté en République Démocratique du Congo. Ensemble, bâtissons un avenir solidaire.</p></div>
     <div><h4 style="color:#fff;margin-bottom:10px;font-size:14px">Navigation</h4><div style="display:flex;flex-direction:column;gap:7px;font-size:13.5px"><a href="#/">Accueil</a><a href="#/how">Comment ça marche</a><a href="#/join">Devenir membre</a><a href="#/login">Espace admin</a></div></div>
-    <div><h4 style="color:#fff;margin-bottom:10px;font-size:14px">Contact</h4><div style="font-size:13.5px;line-height:1.9">📍 Kinshasa, RDC<br/>✉️ contact@vad-asbl.org<br/>📱 +243 000 000 000</div></div>
+    <div><h4 style="color:#fff;margin-bottom:10px;font-size:14px">Contact</h4><div style="font-size:13.5px;line-height:1.9">📍 Complexe SAFRICAS, Ngaliema<br/>Kinshasa, RDC — B.P. 413 KIN I<br/>✉️ kanzastanislas@yahoo.fr<br/>📱 +243 89 66 42 641</div>
+    <a href="#/contact" style="display:inline-block;margin-top:8px;color:var(--gold-light);font-weight:600;font-size:13px">Voir la page Contact →</a></div>
   </div><div class="wrap" style="margin-top:28px;padding-top:18px;border-top:1px solid rgba(255,255,255,.12);font-size:12.5px;color:#94a3b8">© ${new Date().getFullYear()} VAD — ASBL. Lutte contre la pauvreté. Tous droits réservés.</div></footer>`;
 }
 
@@ -1001,6 +1002,61 @@ async function viewCotiser(){
   return publicHeader('/cotiser')+hero+cards+form+publicFooter();
 }
 
+/* ---------- Page Contact ---------- */
+async function viewContact(){
+  const hero = `<section style="position:relative;overflow:hidden;color:#fff;display:flex;align-items:center;min-height:58vh">
+    <div style="position:absolute;inset:0;background-image:url('/images/contact.jpg');background-size:cover;background-position:center"></div>
+    <div style="position:absolute;inset:0;background:linear-gradient(115deg,rgba(6,78,59,.94) 0%,rgba(4,78,57,.83) 50%,rgba(13,148,136,.62) 100%)"></div>
+    <div class="wrap reveal" style="position:relative;z-index:2;padding:70px 20px;max-width:680px;margin:0 auto;text-align:center">
+      <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.14);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:13px;font-weight:600;padding:8px 16px;border-radius:999px;margin-bottom:20px">📞 Contactez la VAD</div>
+      <h1 style="font-family:'Poppins';font-size:clamp(30px,5vw,46px);font-weight:800;line-height:1.12;letter-spacing:-.5px;margin-bottom:16px;text-shadow:0 2px 30px rgba(0,0,0,.3)">Parlons <span style="background:linear-gradient(120deg,var(--gold-light),#fff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">ensemble</span></h1>
+      <p style="font-size:17px;opacity:.95;line-height:1.7;max-width:560px;margin:0 auto;text-shadow:0 1px 12px rgba(0,0,0,.3)">Une question, une demande d'adhesion, un partenariat ? Notre equipe est a votre ecoute.</p>
+    </div>
+  </section>`;
+  const body = `<section class="section"><div class="wrap">
+    <div class="grid grid-2" style="align-items:start">
+      <div class="reveal">
+        <h2 style="font-size:clamp(22px,3vw,28px);color:var(--green-900);font-weight:800;margin-bottom:6px">Nos coordonnees</h2>
+        <p class="slate" style="margin-bottom:24px">Siege social de l'ASBL VAD a Kinshasa.</p>
+        <div class="card" style="padding:24px;margin-bottom:14px;border-left:4px solid var(--green-600)">
+          <div style="display:flex;gap:14px;align-items:flex-start"><div style="font-size:26px">📍</div><div><div style="font-weight:700;color:var(--green-900);margin-bottom:4px">Adresse du siege</div><div class="slate" style="font-size:14.5px;line-height:1.7">14, av. Sergent Moke, Q/Socimat<br/>Complexe SAFRICAS, Kinshasa-Ngaliema<br/><b>Republique Democratique du Congo</b><br/><span class="mono">B.P. 413 KIN I</span></div></div></div>
+        </div>
+        <div class="grid grid-2" style="margin-bottom:14px">
+          <div class="card" style="padding:20px;border-left:4px solid var(--gold)"><div style="font-size:24px;margin-bottom:8px">✉️</div><div style="font-weight:700;color:var(--green-900);margin-bottom:2px;font-size:14px">E-mail</div><a href="mailto:kanzastanislas@yahoo.fr" style="color:var(--green-700);font-size:13.5px;word-break:break-all">kanzastanislas@yahoo.fr</a></div>
+          <div class="card" style="padding:20px;border-left:4px solid #2563eb"><div style="font-size:24px;margin-bottom:8px">📱</div><div style="font-weight:700;color:var(--green-900);margin-bottom:2px;font-size:14px">Telephones</div><a href="tel:+243896642641" style="color:var(--green-700);font-size:13.5px;display:block">+243 89 66 42 641</a><a href="tel:+243851335246" style="color:var(--green-700);font-size:13.5px;display:block">+243 85 13 35 246</a></div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <a class="btn btn-primary" href="tel:+243896642641">📞 Appeler</a>
+          <a class="btn btn-gold" href="https://wa.me/243896642641" target="_blank">💬 WhatsApp</a>
+          <a class="btn btn-ghost" href="mailto:kanzastanislas@yahoo.fr">✉️ E-mail</a>
+        </div>
+      </div>
+      <div class="reveal" style="animation-delay:.1s">
+        <div class="card" style="padding:0;overflow:hidden;box-shadow:var(--shadow-lg)">
+          <iframe src="https://www.google.com/maps?q=Complexe%20SAFRICAS%20Socimat%20Ngaliema%20Kinshasa&output=embed" width="100%" height="420" style="border:0;display:block" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Carte du siege VAD"></iframe>
+          <div style="padding:14px 18px;background:#f8fafc;font-size:13px;color:var(--slate)">📍 Complexe SAFRICAS, Q/Socimat, Ngaliema — Kinshasa</div>
+        </div>
+      </div>
+    </div>
+  </div></section>`;
+  const form = `<section class="section" style="background:linear-gradient(180deg,#f8fafc,#fff)"><div class="wrap" style="max-width:680px">
+    <div style="text-align:center;margin-bottom:28px" class="reveal"><div class="badge badge-gold">Message</div><h2 style="font-size:clamp(24px,4vw,30px);color:var(--green-900);margin-top:10px;font-weight:800">Envoyez-nous un message</h2><p class="slate" style="margin-top:8px">Nous vous repondrons dans les meilleurs delais.</p></div>
+    <div class="card" style="padding:30px;box-shadow:var(--shadow-lg)">
+      <div id="contactMsg"></div>
+      <form id="contactForm">
+        <div class="grid grid-2">
+          <div class="field"><label class="label">Nom complet *</label><input class="input" name="name" required placeholder="Votre nom"></div>
+          <div class="field"><label class="label">E-mail ou telephone *</label><input class="input" name="contact" required placeholder="email ou telephone"></div>
+        </div>
+        <div class="field"><label class="label">Sujet</label><input class="input" name="subject" placeholder="Objet de votre message"></div>
+        <div class="field"><label class="label">Message *</label><textarea class="textarea" name="message" rows="5" required placeholder="Votre message..."></textarea></div>
+        <button class="btn btn-primary" type="submit" style="width:100%;justify-content:center;font-size:15px;padding:15px">📨 Envoyer le message</button>
+      </form>
+    </div>
+  </div></section>`;
+  return publicHeader('/contact')+hero+body+form+publicFooter();
+}
+
 function notFound(){ return publicHeader('/')+`<div class="wrap section" style="text-align:center"><h1 style="font-size:40px;color:var(--green-900)">404</h1><p class="slate">Page introuvable.</p><a class="btn btn-primary" href="#/" style="margin-top:16px">← Accueil</a></div>`+publicFooter(); }
 
 /* ============================================================
@@ -1011,6 +1067,7 @@ r('/how', viewHow);
 r('/join', viewJoin);
 r('/join/:code', viewJoin);
 r('/cotiser', viewCotiser);
+r('/contact', viewContact);
 r('/login', viewLogin);
 r('/admin', viewDashboard);
 r('/admin/members', viewMembers);
@@ -1058,6 +1115,8 @@ function afterRender(){
   const pms=$('#payMethodSel'); if(pms) pms.onchange=showPayInstruction;
   // slider carrousel (page accueil)
   if($('#vadSlider')) initSlider();
+  // formulaire contact
+  const cf=$('#contactForm'); if(cf) cf.onsubmit=handleContact;
   // menus hamburger mobile
   const pb=$('#publicBurger'); const nm=$('#navMobile'); const nbk=$('#navBackdrop');
   if(pb){ pb.onclick=()=>{ nm.classList.toggle('show'); nbk.classList.toggle('show'); };
@@ -1160,6 +1219,17 @@ async function handleRefSelect(e){
 /* ============================================================
    DÉMARRAGE
    ============================================================ */
+// Gestion du formulaire de contact (ouvre le client email avec le message pré-rempli)
+function handleContact(e){
+  e.preventDefault();
+  const f=new FormData(e.target);
+  const subject=encodeURIComponent('[VAD] '+(f.get('subject')||'Message'));
+  const body=encodeURIComponent('Nom: '+f.get('name')+'\nContact: '+f.get('contact')+'\n\n'+f.get('message'));
+  window.location.href='mailto:kanzastanislas@yahoo.fr?subject='+subject+'&body='+body;
+  $('#contactMsg').innerHTML='<div class="alert alert-success">✅ Votre messagerie va souvrir avec le message pré-rempli. Cliquez sur « Envoyer » dans votre application e-mail.</div>';
+  e.target.reset();
+}
+
 // Initialisation du carrousel d'images (page d'accueil)
 function initSlider(){
   const track = $('#sliderTrack'); const dotsBox = $('#sliderDots');

@@ -61,6 +61,17 @@
   .brand-text span{display:block;font-size:11px;color:var(--muted);letter-spacing:.3px}
   .nav-links{display:flex;align-items:center;gap:24px}
   .nav-links a{font-size:14px;font-weight:500;color:var(--slate)}.nav-links a:hover{color:var(--green-700)}
+  .nav-dropdown{position:relative}
+  .nav-dropdown-toggle{display:flex;align-items:center;gap:4px;cursor:pointer;font-size:14px;font-weight:500;color:var(--slate);padding:6px 0}
+  .nav-dropdown-toggle:hover{color:var(--green-700)}
+  .nav-dropdown-toggle .caret{font-size:10px;transition:.2s}
+  .nav-dropdown:hover .nav-dropdown-toggle .caret{transform:rotate(180deg)}
+  .nav-dropdown-menu{position:absolute;top:100%;left:-10px;background:#fff;box-shadow:0 16px 40px rgba(15,23,42,.16);border-radius:14px;padding:8px;min-width:260px;border:1px solid var(--line);opacity:0;visibility:hidden;transform:translateY(10px);transition:.22s;z-index:60}
+  .nav-dropdown:hover .nav-dropdown-menu{opacity:1;visibility:visible;transform:translateY(0)}
+  .nav-dropdown-menu a{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:10px;font-size:14px;font-weight:500;color:var(--slate)}
+  .nav-dropdown-menu a:hover{background:#f0fdf4;color:var(--green-700)}
+  .nav-dropdown-menu a .mi{font-size:18px}
+  .nav-sub-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--gold);padding:8px 14px 4px}
   @media(max-width:680px){.nav-links .hide-sm{display:none}}
   /* ===== Hero moderne avec image de fond ===== */
   .hero{position:relative;min-height:92vh;display:flex;align-items:center;color:#fff;overflow:hidden;background:linear-gradient(135deg,#064e3b,#047857);}
@@ -407,14 +418,27 @@ function shareButtons(links){
    VUES PUBLIQUES
    ============================================================ */
 function publicHeader(active){
-  const links = [['Accueil','/'],['Comment ça marche','/how'],['Cotiser','/cotiser'],['Rejoindre','/join'],['Contact','/contact'],['Espace admin','/login']];
+  const links = [['Comment ca marche','/how'],['Cotiser','/cotiser'],['Rejoindre','/join'],['Contact','/contact'],['Espace admin','/login']];
+  const missionSub = [['Mot du President National','/mission/president','🗣️'],['Notre Mission','/mission','🎯'],['Equipe de travail','/mission/equipe','👥'],['Documents administratifs','/mission/documents','📄']];
+  const isMission = active && active.indexOf('/mission')===0;
   return `<header class="site-header"><div class="wrap">
-    <a class="brand" href="#/">${logo(44)}<div class="brand-text"><b>VAD</b><span>Vision d'Assistance et de Développement</span></div></a>
-    <nav class="nav-links">${links.map(l=>`<a class="${active===l[1]?'footer-link':''}" href="#${l[1]}">${l[0]}</a>`).join('')}</nav>
+    <a class="brand" href="#/">${logo(44)}<div class="brand-text"><b>VAD</b><span>Vision d'Assistance et de Developpement</span></div></a>
+    <nav class="nav-links">
+      <a class="${active==='/'?'footer-link':''}" href="#/">Accueil</a>
+      <div class="nav-dropdown"><a class="nav-dropdown-toggle ${isMission?'footer-link':''}">Mission VAD <span class="caret">▼</span></a>
+        <div class="nav-dropdown-menu">${missionSub.map(s=>`<a href="#${s[1]}"><span class="mi">${s[2]}</span>${s[0]}</a>`).join('')}</div>
+      </div>
+      ${links.map(l=>`<a class="${active===l[1]?'footer-link':''}" href="#${l[1]}">${l[0]}</a>`).join('')}
+    </nav>
     <button class="hamburger" id="publicBurger" aria-label="Menu">☰</button>
   </div></header>
   <div class="mobile-backdrop" id="navBackdrop"></div>
-  <nav class="nav-mobile" id="navMobile">${links.map(l=>`<a href="#${l[1]}">${l[0]}</a>`).join('')}</nav>`;
+  <nav class="nav-mobile" id="navMobile">
+    <a href="#/">🏠 Accueil</a>
+    <div class="nav-sub-label">Mission VAD</div>
+    ${missionSub.map(s=>`<a href="#${s[1]}" style="padding-left:36px">${s[2]} ${s[0]}</a>`).join('')}
+    ${links.map(l=>`<a href="#${l[1]}">${l[0]}</a>`).join('')}
+  </nav>`;
 }
 function publicFooter(){
   return `<footer class="site-footer"><div class="wrap foot-grid">
@@ -1057,6 +1081,94 @@ async function viewContact(){
   return publicHeader('/contact')+hero+body+form+publicFooter();
 }
 
+/* ---------- Pages Mission VAD ---------- */
+function missionHero(img, badge, title, gold, subtitle){
+  return `<section style="position:relative;overflow:hidden;color:#fff;display:flex;align-items:center;min-height:50vh">
+    <div style="position:absolute;inset:0;background-image:url('/images/${img}');background-size:cover;background-position:center"></div>
+    <div style="position:absolute;inset:0;background:linear-gradient(115deg,rgba(6,78,59,.94) 0%,rgba(4,78,57,.83) 50%,rgba(13,148,136,.62) 100%)"></div>
+    <div class="wrap reveal" style="position:relative;z-index:2;padding:60px 20px;max-width:680px;margin:0 auto;text-align:center">
+      <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.14);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:13px;font-weight:600;padding:8px 16px;border-radius:999px;margin-bottom:18px">${badge}</div>
+      <h1 style="font-family:'Poppins';font-size:clamp(28px,4.5vw,42px);font-weight:800;line-height:1.12;letter-spacing:-.5px;margin-bottom:14px;text-shadow:0 2px 30px rgba(0,0,0,.3)">${title} <span style="background:linear-gradient(120deg,var(--gold-light),#fff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">${gold||''}</span></h1>
+      <p style="font-size:16px;opacity:.95;line-height:1.7;max-width:540px;margin:0 auto;text-shadow:0 1px 12px rgba(0,0,0,.3)">${subtitle}</p>
+    </div>
+  </section>`;
+}
+
+async function viewPresident(){
+  const addr = "Chers membres et partenaires de Vision d'Assistance et de Developpement (VAD),";
+  return publicHeader('/mission/president')+missionHero('president.jpg','Mot du President National','','','La vision et lengagement de la VAD dans la lutte contre la pauvrete.')+`
+  <section class="section"><div class="wrap" style="max-width:820px">
+    <div class="card reveal" style="padding:40px;box-shadow:var(--shadow-lg)">
+      <div style="text-align:center;margin-bottom:30px">
+        <img src="/images/president.jpg" alt="President" style="width:120px;height:120px;border-radius:50%;object-fit:cover;border:4px solid var(--green-100);box-shadow:0 8px 24px rgba(0,0,0,.15);margin:0 auto 16px"/>
+        <h2 style="font-family:'Poppins';font-size:26px;color:var(--green-900);font-weight:800">KANZA NZINU Stanislas</h2>
+        <div class="badge badge-gold" style="margin-top:8px">Coordonnateur National</div>
+      </div>
+      <div style="font-size:11px;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:1px;text-align:center;margin-bottom:20px">Mot du President National</div>
+      <div style="font-size:16px;line-height:1.9;color:var(--ink)">
+        <p>${addr}</p>
+        <p>C'est avec un grand honneur que je m'adresse a vous en ma qualite de Coordonnateur National. Notre association, nee de la volonte de lutter contre la pauvrete, oeuvre chaque jour dans la region sub-saharienne pour apporter un changement durable dans la vie des communautes les plus vulnerables.</p>
+        <p>La pauvrete ne connait pas de frontieres. Elle frappe des millions de familles a travers notre continent. C'est pourquoi VAD s'engage resolument dans des actions concretes : <b>vulgarisation de notre programme</b>, <b>recrutement de volontaires engages</b>, <b>formation des membres</b>, <b>assistance aux demunis</b>, <b>encadrement des jeunes</b> et <b>execution de projets de developpement</b>.</p>
+        <p>Chaque projet que nous menons vise un double objectif : le developpement de notre association et l'epanouissement de nos membres. Ensemble, nous construisons un avenir meilleur pour les generations presentes et futures.</p>
+        <p>Je remercie tous ceux qui, par leur engagement, leurs dons ou leur soutien moral, contribuent a faire de VAD un acteur incontournable de la solidarite en Afrique sub-saharienne.</p>
+        <p style="font-size:20px;font-weight:700;color:var(--green-700);text-align:center;margin:28px 0">« Ensemble, vainquons la pauvrete ! »</p>
+        <p style="text-align:right;font-style:italic;color:var(--slate)">Bien fraternellement,<br/><b style="color:var(--green-900)">KANZA NZINU Stanislas</b><br/>Coordonnateur National, VAD</p>
+      </div>
+    </div>
+  </div></section>`+publicFooter();
+}
+
+async function viewMission(){
+  return publicHeader('/mission')+missionHero('hero-solidarite.jpg','Notre Mission','','','Ce qui nous anime au quotidien dans la lutte contre la pauvrete.')+`
+  <section class="section"><div class="wrap" style="max-width:900px">
+    <div class="grid grid-3" style="margin-bottom:24px">
+      <div class="card step reveal"><div class="ico">🎯</div><h3>Notre Mission</h3><p>Lutter contre la pauvrete en Afrique sub-saharienne a travers un fonds commun solidaire (FLCP), le parrainage et l'assistance programmee (AIP).</p></div>
+      <div class="card step reveal" style="animation-delay:.1s"><div class="ico">👁️</div><h3>Notre Vision</h3><p>Un continent ou chaque famille accede a la dignite, a l'education, a la sante et a l'autonomie economique grace a la solidarite.</p></div>
+      <div class="card step reveal" style="animation-delay:.2s"><div class="ico">💚</div><h3>Nos Valeurs</h3><p>Solidarite, transparence, engagement, entraide et developpement durable au service des communautes les plus vulnerables.</p></div>
+    </div>
+    <div class="card reveal" style="padding:30px;background:linear-gradient(135deg,#f0fdf4,#fff);border-left:4px solid var(--green-600)">
+      <h3 style="color:var(--green-900);font-size:20px;margin-bottom:14px">Nos axes d'intervention</h3>
+      <div class="grid grid-2">
+        <div class="stat-row"><span>🌱 Vulgarisation du programme FLCP</span><b>✓</b></div>
+        <div class="stat-row"><span>🤝 Recrutement de volontaires engagés</span><b>✓</b></div>
+        <div class="stat-row"><span>📚 Formation des membres</span><b>✓</b></div>
+        <div class="stat-row"><span>🩺 Assistance aux démunis</span><b>✓</b></div>
+        <div class="stat-row"><span>🎓 Encadrement des jeunes</span><b>✓</b></div>
+        <div class="stat-row"><span>🏗️ Projets de développement</span><b>✓</b></div>
+      </div>
+    </div>
+  </div></section>`+publicFooter();
+}
+
+async function viewEquipe(){
+  return publicHeader('/mission/equipe')+missionHero('comment-ca-marche.jpg','Equipe de travail','','','Les femmes et les hommes qui font vivre la VAD au quotidien.')+`
+  <section class="section"><div class="wrap" style="max-width:900px">
+    <div style="text-align:center;margin-bottom:36px" class="reveal"><h2 style="font-size:clamp(24px,4vw,30px);color:var(--green-900);font-weight:800">La direction nationale</h2><p class="slate">Une equipe engagee et devouee a la cause de la VAD.</p></div>
+    <div class="grid grid-3">
+      <div class="card reveal" style="text-align:center;padding:28px"><div class="avatar gold" style="width:80px;height:80px;font-size:30px;margin:0 auto 14px">KS</div><h3 style="color:var(--green-900)">KANZA NZINU Stanislas</h3><div class="badge badge-gold" style="margin-top:6px">Coordonnateur National</div></div>
+      <div class="card reveal" style="text-align:center;padding:28px;animation-delay:.1s"><div class="avatar" style="width:80px;height:80px;font-size:30px;margin:0 auto 14px">RF</div><h3 style="color:var(--green-900)">Responsable des Finances</h3><div class="badge badge-blue" style="margin-top:6px">RF-VAD</div></div>
+      <div class="card reveal" style="text-align:center;padding:28px;animation-delay:.2s"><div class="avatar" style="width:80px;height:80px;font-size:30px;margin:0 auto 14px">SE</div><h3 style="color:var(--green-900)">Secretariat</h3><div class="badge badge-gray" style="margin-top:6px">Administration</div></div>
+    </div>
+    <div class="card reveal" style="padding:24px;margin-top:20px;background:#fffbeb;border:1px solid #fde68a;text-align:center"><p style="color:#92400e;font-size:14.5px">📋 Cette page sera enrichie avec les photos et coordonnees de toute l'equipe nationale et provinciale.</p></div>
+  </div></section>`+publicFooter();
+}
+
+async function viewDocuments(){
+  return publicHeader('/mission/documents')+missionHero('section-developpement.jpg','Documents administratifs','','','Les textes officiels et documents de l ASBL VAD.')+`
+  <section class="section"><div class="wrap" style="max-width:800px">
+    <div class="card reveal" style="padding:30px;box-shadow:var(--shadow-lg)">
+      <h3 style="color:var(--green-900);font-size:20px;margin-bottom:16px">Documents officiels</h3>
+      <div class="stat-row"><span>📜 Statuts de l'ASBL VAD</span><b><span class="badge badge-gray">Bientôt disponible</span></b></div>
+      <div class="stat-row"><span>📋 Règlement intérieur</span><b><span class="badge badge-gray">Bientôt disponible</span></b></div>
+      <div class="stat-row"><span>🔢 Numéro d'enregistrement (RCCM)</span><b><span class="badge badge-gray">À compléter</span></b></div>
+      <div class="stat-row"><span>📈 Rapport annuel d'activités</span><b><span class="badge badge-gray">Bientôt disponible</span></b></div>
+      <div class="stat-row"><span>💰 Rapport financier (RF-VAD)</span><b><span class="badge badge-gray">Bientôt disponible</span></b></div>
+      <div class="stat-row"><span>🗺️ Plan stratégique</span><b><span class="badge badge-gray">Bientôt disponible</span></b></div>
+    </div>
+    <div class="card reveal" style="padding:20px;margin-top:16px;background:#f0fdf4;border:1px solid var(--green-100);text-align:center"><p class="slate" style="font-size:14px">📎 Les documents officiels seront telechargeables ici une fois numerises. <a href="#/contact" class="footer-link">Contactez le secretariat</a>.</p></div>
+  </div></section>`+publicFooter();
+}
+
 function notFound(){ return publicHeader('/')+`<div class="wrap section" style="text-align:center"><h1 style="font-size:40px;color:var(--green-900)">404</h1><p class="slate">Page introuvable.</p><a class="btn btn-primary" href="#/" style="margin-top:16px">← Accueil</a></div>`+publicFooter(); }
 
 /* ============================================================
@@ -1068,6 +1180,10 @@ r('/join', viewJoin);
 r('/join/:code', viewJoin);
 r('/cotiser', viewCotiser);
 r('/contact', viewContact);
+r('/mission', viewMission);
+r('/mission/president', viewPresident);
+r('/mission/equipe', viewEquipe);
+r('/mission/documents', viewDocuments);
 r('/login', viewLogin);
 r('/admin', viewDashboard);
 r('/admin/members', viewMembers);

@@ -902,26 +902,21 @@ async function viewCotiser(){
     { id:'airtel', icon:'🔴', name:'Airtel Money', color:'#e40000', title:'Airtel Money',
       lines:[`Numéro Airtel Money : <b class="mono">${esc(info['payment.airtel_number'])}</b>`,`Code marchand : <b class="mono">${esc(info['payment.airtel_merchant'])}</b>`,`Envoi d'argent → numéro et montant`] },
   ];
-  // HERO : texte à gauche + image à droite
-  const hero = `<section style="position:relative;overflow:hidden;background:linear-gradient(135deg,#064e3b,#047857);color:#fff">
-    <div class="wrap" style="display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;padding:70px 20px;max-width:1180px;margin:0 auto">
-      <div class="reveal">
-        <div class="eyebrow" style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.14);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:13px;font-weight:600;padding:8px 16px;border-radius:999px;margin-bottom:22px">💳 Cotisation FLCP en ligne</div>
-        <h1 style="font-family:'Poppins';font-size:clamp(30px,4.5vw,46px);font-weight:800;line-height:1.12;letter-spacing:-.5px;margin-bottom:20px">Cotisez en ligne, <span style="background:linear-gradient(120deg,var(--gold-light),#fff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">luttons contre la pauvreté</span></h1>
-        <p style="font-size:17px;opacity:.95;line-height:1.7;margin-bottom:18px;max-width:520px">Votre cotisation est l'élan qui transforme des vies. Chaque <b style="color:var(--gold-light)">${fmt(FLCP_AMT)} CDF</b> versé au FLCP finance l'aide médicale, funéraire, scolaire, alimentaire et le micro-crédit. Cotiser en ligne, c'est <b>simple, rapide et solidaire</b> — réglez depuis votre téléphone en 1 minute.</p>
-        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px">
-          <div style="background:rgba(255,255,255,.13);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:12px 16px"><div style="font-size:11px;opacity:.85;text-transform:uppercase;letter-spacing:.4px">Votre geste solidaire</div><div style="font-family:'Poppins';font-size:20px;font-weight:800;color:var(--gold-light)">${fmt(FLCP_AMT)} CDF/mois</div></div>
-          <div style="background:rgba(255,255,255,.13);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:12px 16px"><div style="font-size:11px;opacity:.85;text-transform:uppercase;letter-spacing:.4px">AIP à votre parrain</div><div style="font-family:'Poppins';font-size:20px;font-weight:800;color:var(--gold-light)">30% auto</div></div>
-        </div>
-        <a class="btn btn-gold" href="#declare">Déclarer mon paiement →</a>
+  // HERO : image en fond plein écran + texte par-dessus
+  const hero = `<section style="position:relative;overflow:hidden;color:#fff;display:flex;align-items:center;min-height:78vh">
+    <div style="position:absolute;inset:0;background-image:url('/images/cotiser-paiement.jpg');background-size:cover;background-position:center"></div>
+    <div style="position:absolute;inset:0;background:linear-gradient(115deg,rgba(6,78,59,.93) 0%,rgba(4,78,57,.82) 50%,rgba(13,148,136,.62) 100%)"></div>
+    <div class="wrap reveal" style="position:relative;z-index:2;padding:80px 20px;max-width:680px;margin:0 auto;text-align:center">
+      <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.14);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:13px;font-weight:600;padding:8px 16px;border-radius:999px;margin-bottom:22px">💳 Cotisation FLCP en ligne</div>
+      <h1 style="font-family:'Poppins';font-size:clamp(30px,5vw,48px);font-weight:800;line-height:1.12;letter-spacing:-.5px;margin-bottom:20px;text-shadow:0 2px 30px rgba(0,0,0,.3)">Cotisez en ligne, <span style="background:linear-gradient(120deg,var(--gold-light),#fff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">luttons contre la pauvreté</span></h1>
+      <p style="font-size:17px;opacity:.95;line-height:1.7;margin:0 auto 22px;max-width:560px;text-shadow:0 1px 12px rgba(0,0,0,.3)">Votre cotisation est l'élan qui transforme des vies. Chaque <b style="color:var(--gold-light)">${fmt(FLCP_AMT)} CDF</b> versé au FLCP finance l'aide médicale, funéraire, scolaire, alimentaire et le micro-crédit. Réglez depuis votre téléphone en 1 minute.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:22px">
+        <div style="background:rgba(255,255,255,.13);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.22);border-radius:14px;padding:14px 18px"><div style="font-size:11px;opacity:.85;text-transform:uppercase;letter-spacing:.4px">Votre geste solidaire</div><div style="font-family:'Poppins';font-size:22px;font-weight:800;color:var(--gold-light)">${fmt(FLCP_AMT)} CDF/mois</div></div>
+        <div style="background:rgba(255,255,255,.13);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.22);border-radius:14px;padding:14px 18px"><div style="font-size:11px;opacity:.85;text-transform:uppercase;letter-spacing:.4px">AIP à votre parrain</div><div style="font-family:'Poppins';font-size:22px;font-weight:800;color:var(--gold-light)">30% auto</div></div>
       </div>
-      <div class="reveal" style="animation-delay:.15s">
-        <div style="position:relative;border-radius:24px;overflow:hidden;box-shadow:0 30px 70px rgba(0,0,0,.4);border:4px solid rgba(255,255,255,.2)">
-          <img src="/images/cotiser-paiement.jpg" alt="Cotisation en ligne via Mobile Money" style="width:100%;height:auto;display:block;aspect-ratio:4/3;object-fit:cover"/>
-        </div>
-      </div>
-    </div></section>
-    <style>@media(max-width:880px){.wrap[style*="grid-template-columns:1.05fr"]{grid-template-columns:1fr !important;gap:30px !important}}</style>`;
+      <a class="btn btn-gold" href="#declare" style="font-size:16px;padding:15px 30px">Déclarer mon paiement →</a>
+    </div>
+  </section>`;
   const cards = `<section class="section"><div class="wrap">
     <div style="text-align:center;margin-bottom:36px" class="reveal"><div class="badge badge-green">Moyens de paiement</div><h2 style="font-size:clamp(26px,4vw,32px);color:var(--green-900);margin-top:10px;font-weight:800">4 façons simples de cotiser</h2><p class="slate" style="margin-top:8px">Choisissez le moyen qui vous convient. Toutes les options sont sécurisées.</p></div>
     <div class="grid grid-4">${methods.map(m=>`<div class="card reveal" style="padding:24px;border-top:4px solid ${m.color}">

@@ -405,7 +405,7 @@ async function viewContentTexts(){
 
 // Upload d'image
 function bindImageUploads(){
-  $('[data-imgkey]').forEach(inp=>{
+  $$('[data-imgkey]').forEach(inp=>{
     inp.onchange = async (e)=>{
       const file = e.target.files[0]; const key = inp.dataset.imgkey;
       if(!file) return;
@@ -423,7 +423,7 @@ function bindImageUploads(){
       reader.readAsDataURL(file);
     };
   });
-  $('[data-imgreset]').forEach(btn=>{
+  $$('[data-imgreset]').forEach(btn=>{
     btn.onclick = async ()=>{
       const key = btn.dataset.imgreset;
       try { await api('/content/image/reset', {method:'POST', body:JSON.stringify({key})}); await loadContent(); dispatch(); }
@@ -433,8 +433,8 @@ function bindImageUploads(){
 }
 // Sauvegarde de texte
 function bindTextSaves(){
-  $('[data-txtsec]').forEach(t=>t.onclick=()=>{ txtSection=t.dataset.txtsec; dispatch(); });
-  $('[data-txtsave]').forEach(btn=>{
+  $$('[data-txtsec]').forEach(t=>t.onclick=()=>{ txtSection=t.dataset.txtsec; dispatch(); });
+  $$('[data-txtsave]').forEach(btn=>{
     btn.onclick = async ()=>{
       const key = btn.dataset.txtsave;
       const ta = $(`[data-txtkey="${key}"]`);
@@ -1411,7 +1411,7 @@ r('/admin/contenu/textes', viewContentTexts);
    ============================================================ */
 function afterRender(){
   // accordéon sidebar admin
-  $(".nav-group-header").forEach(function(h){ h.onclick=function(){ h.classList.toggle("open"); if(h.nextElementSibling) h.nextElementSibling.classList.toggle("open"); }; });
+  $$(".nav-group-header").forEach(function(h){ h.onclick=function(){ h.classList.toggle("open"); if(h.nextElementSibling) h.nextElementSibling.classList.toggle("open"); }; });
   // logout
   const lo = $('#logoutBtn'); if(lo) lo.onclick = logout;
   // devise

@@ -130,8 +130,8 @@
   .nav-group-header .gh-ico{font-size:16px}
   .nav-group-header .gh-caret{font-size:11px;transition:transform .25s;color:rgba(255,255,255,.5)}
   .nav-group-header.open .gh-caret{transform:rotate(180deg)}
-  .nav-group-items{overflow:hidden;max-height:0;transition:max-height .3s ease;opacity:0}
-  .nav-group-items.open{max-height:400px;opacity:1;transition:max-height .4s ease,opacity .3s ease .1s}
+  .nav-group-items{overflow:hidden;max-height:500px;transition:max-height .35s ease,opacity .25s;opacity:1}
+  .nav-group-items.collapsed{max-height:0;opacity:0}
   .nav-group-items .nav-item{padding-left:22px}
   .nav-item{display:flex;align-items:center;gap:11px;padding:11px 14px;border-radius:10px;font-size:14px;color:#cbd5e1;cursor:pointer;font-weight:500;transition:.2s;margin-bottom:2px}
   .nav-item:hover{background:rgba(255,255,255,.1);color:#fff;transform:translateX(3px)}
@@ -772,7 +772,7 @@ async function adminShell(active, contentPromise){
     ${nav.map(sec=>{
       if(!sec.s){ return '<div class="nav-section">'+sec.items.map(it=>'<a class="nav-item '+(active===it[1]?'active':'')+'" href="#'+it[1]+'"><span class="ic">'+it[2]+'</span>'+it[0]+'</a>').join('')+'</div>'; }
       const hasActive = sec.items.some(it=>active===it[1]);
-      return '<div class="nav-section"><div class="nav-group-header '+(hasActive?'open':'')+'" data-grp="'+sec.s+'"><span class="gh-left"><span class="gh-ico">'+sec.icon+'</span>'+sec.s+'</span><span class="gh-caret">▼</span></div><div class="nav-group-items '+(hasActive?'open':'')+'">'+sec.items.map(it=>'<a class="nav-item '+(active===it[1]?'active':'')+'" href="#'+it[1]+'"><span class="ic">'+it[2]+'</span>'+it[0]+'</a>').join('')+'</div></div>';
+      return '<div class="nav-section"><div class="nav-group-header '+'open'+'" data-grp="'+sec.s+'"><span class="gh-left"><span class="gh-ico">'+sec.icon+'</span>'+sec.s+'</span><span class="gh-caret">▼</span></div><div class="nav-group-items '+'open'+'">'+sec.items.map(it=>'<a class="nav-item '+(active===it[1]?'active':'')+'" href="#'+it[1]+'"><span class="ic">'+it[2]+'</span>'+it[0]+'</a>').join('')+'</div></div>';
     }).join('')}
     <div class="nav-section"><div class="nav-item" id="logoutBtn" style="cursor:pointer;color:#fca5a5"><span class="ic">🚪</span>Déconnexion</div></div>
   </aside>`;

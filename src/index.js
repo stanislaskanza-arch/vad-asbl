@@ -25,8 +25,14 @@ app.use('/api/forecasts', require('./routes/forecasts'));
 app.use('/api/misc', require('./routes/misc'));
 app.use('/api/content', require('./routes/content'));
 
-// Frontend intégré — anti-cache pour index.html (toujours la dernière version)
-app.use(express.static(path.join(__dirname, '../public'), { maxAge: '1d' }));
+// Frontend intégré — HTML jamais mis en cache (toujours la dernière version)
+app.use(express.static(path.join(__dirname, '../public'), { 
+  setHeaders: (res, filepath) => {
+    if (filepath.endsWith('.html')) {
+      res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    }
+  }
+}));
 app.get('*', (req, res) => {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   res.sendFile(path.join(__dirname, '../public', 'index.html'));

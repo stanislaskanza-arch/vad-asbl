@@ -237,6 +237,16 @@ async function main() {
       { key: 'association.default_currency', value: 'CDF', description: 'Devise par défaut' },
       { key: 'flcp.aip_rate', value: '30', description: 'Taux AIP (%) crédité au parrain' },
       { key: 'flcp.monthly_amount', value: '5000', description: 'Montant mensuel FLCP en CDF' },
+      { key: 'payment.bank_name', value: 'RAWBANK', description: 'Nom de la banque de l\'ASBL' },
+      { key: 'payment.bank_account_name', value: 'ASBL VAD — Vision d\'Assistance et de Développement', description: 'Titulaire du compte bancaire' },
+      { key: 'payment.bank_account_number', value: '00000-00000-0000000000000', description: 'Numéro de compte bancaire (RIB)' },
+      { key: 'payment.bank_swift', value: 'RAWSRDCD', description: 'Code SWIFT/BIC de la banque' },
+      { key: 'payment.mpesa_number', value: '+243 000 000 000', description: 'Numéro M-Pesa (Vodacom) de l\'ASBL' },
+      { key: 'payment.mpesa_merchant', value: 'VAD000', description: 'Code marchand M-Pesa' },
+      { key: 'payment.orange_number', value: '+243 000 000 000', description: 'Numéro Orange Money de l\'ASBL' },
+      { key: 'payment.orange_merchant', value: 'VAD', description: 'Code marchand Orange Money' },
+      { key: 'payment.airtel_number', value: '+243 000 000 000', description: 'Numéro Airtel Money de l\'ASBL' },
+      { key: 'payment.airtel_merchant', value: 'VAD', description: 'Code marchand Airtel Money' },
     ],
   });
 

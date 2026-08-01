@@ -24,6 +24,7 @@ app.use('/api/referrals', require('./routes/referrals'));
 app.use('/api/forecasts', require('./routes/forecasts'));
 app.use('/api/misc', require('./routes/misc'));
 app.use('/api/content', require('./routes/content'));
+app.use('/api/newsletter', require('./routes/newsletter'));
 
 // Frontend intégré — HTML jamais mis en cache (toujours la dernière version)
 app.use(express.static(path.join(__dirname, '../public'), { 

@@ -625,16 +625,10 @@ async function viewHome(){
           ${kpiImpact('Tiers (subventions/dons/legs)', shortMoney(s.totalThirdParty), 'Partenaires & donateurs', '🎁')}
           ${kpiImpact('AIP crédité aux parrains', money(s.aipCredited), '30% reversé automatiquement', '📈')}
         </div>
-        <div class="grid grid-2">
-          <div style="background:rgba(255,255,255,.1);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.2);border-radius:16px;padding:24px">
-            <h3 style="color:#fff;font-size:18px;margin-bottom:14px">🏆 Meilleurs parrains</h3>
-            ${s.topSponsors && s.topSponsors.length ? s.topSponsors.map((sp,i)=>`<div class="stat-row" style="border-color:rgba(255,255,255,.12);color:#e2e8f0"><span>${sp.firstName} ${sp.lastName}</span><b style="color:var(--gold-light)">${sp.directReferrals} filleul${sp.directReferrals>1?'s':''}</b></div>`).join('') : '<div style="opacity:.7;text-align:center;padding:20px">Bientôt vos premiers parrains !</div>'}
-          </div>
           <div style="background:rgba(255,255,255,.1);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.2);border-radius:16px;padding:24px">
             <h3 style="color:#fff;font-size:18px;margin-bottom:14px">📍 Présence par province</h3>
             ${s.provinces && s.provinces.length ? barChart(s.provinces.map(p=>({v:p._count.province,l:p.province||'—'})),{color:'gold'}) : '<div style="opacity:.7;text-align:center;padding:20px">—</div>'}
           </div>
-        </div>
       </div>
     </section>`;
   const cta = `

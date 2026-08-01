@@ -137,4 +137,17 @@ router.post('/declare-payment', async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+
+// POST /membership-request - demande d adhesion publique
+router.post("/membership-request", async (req, res) => {
+  try {
+    const { firstName, lastName, gender, phone, email, city, profession, sponsor } = req.body;
+    if (!firstName || !lastName) return res.status(400).json({ error: "Prenom et nom requis" });
+    const r = await req.prisma.membershipRequest.create({
+      data: { firstName, lastName, gender: gender||null, phone: phone||null, email: email||null, city: city||null, profession: profession||null, sponsorCode: sponsor||null }
+    });
+    res.status(201).json({ ok: true, message: "Merci ! Votre demande d adhesion a bien ete enregistree. Un responsable vous contactera." });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 module.exports = router;

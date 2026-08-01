@@ -1662,7 +1662,9 @@ async function viewMessages(){
 
 // Ecouteur global deconnexion (indestructible)
 document.addEventListener("click", function(e){ if(e.target.closest("#logoutBtn")){ e.preventDefault(); logout(); } });
-(async()=>{try{await loadContent();}catch(e){}dispatch();})();
+(async()=>{try{await loadContent();}catch(e){}
+  if(state.token){ try{ await api('/auth/me'); }catch(e){ state.token=null; state.user=null; localStorage.removeItem('vad_token'); localStorage.removeItem('vad_user'); } }
+  dispatch();})();
 </script>
 </body>
 </html>

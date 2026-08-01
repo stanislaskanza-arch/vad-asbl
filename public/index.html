@@ -572,7 +572,7 @@ function publicFooter(){
     <div><h4 style="color:#fff;margin-bottom:10px;font-size:14px">Navigation</h4><div style="display:flex;flex-direction:column;gap:7px;font-size:13.5px"><a href="#/">Accueil</a><a href="#/how">Comment ça marche</a><a href="#/join">Devenir membre</a><a href="#/login">Espace admin</a></div></div>
     <div><h4 style="color:#fff;margin-bottom:10px;font-size:14px">Contact</h4><div style="font-size:13.5px;line-height:1.9">📍 Complexe SAFRICAS, Ngaliema<br/>Kinshasa, RDC — B.P. 413 KIN I<br/>✉️ kanzastanislas@yahoo.fr<br/>📱 +243 89 66 42 641</div>
     <a href="#/contact" style="display:inline-block;margin-top:8px;color:var(--gold-light);font-weight:600;font-size:13px">Voir la page Contact →</a></div>
-  </div><div class="wrap" style="margin-top:28px;padding-top:18px;border-top:1px solid rgba(255,255,255,.12);font-size:12.5px;color:#94a3b8">© ${new Date().getFullYear()} VAD — ASBL. Lutte contre la pauvreté. Tous droits réservés.</div></footer>`;
+  </div><div style="max-width:480px;margin:20px auto 0"><div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:14px;padding:18px"><div style="color:#fff;font-weight:700;font-size:14px;margin-bottom:10px">Newsletter VAD</div><form id="newsletterForm" style="display:flex;gap:8px;flex-wrap:wrap"><input name="email" type="email" placeholder="Votre e-mail" style="flex:1;min-width:140px;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;font-size:14px"><button class="btn btn-gold btn-sm" type="submit">S abonner</button></form><div id="newsletterMsg" style="margin-top:8px;font-size:13px"></div></div></div><div class="wrap" style="margin-top:28px;padding-top:18px;border-top:1px solid rgba(255,255,255,.12);font-size:12.5px;color:#94a3b8">© ${new Date().getFullYear()} VAD — ASBL. Lutte contre la pauvreté. Tous droits réservés.</div></footer>`;
 }
 
 async function viewHome(){
@@ -775,6 +775,7 @@ async function adminShell(active, contentPromise){
     { s:'Gestion', icon:'🗂️', items:[['Membres','/admin/members','👥'],['Finances','/admin/finances','💰']]},
     { s:'Réseau & Parrainage', icon:'🌐', items:[['Parrains & Arbre','/admin/sponsors','🌳'],['Parrainage & Liens','/admin/referrals','🔗'],['Projections','/admin/forecasts','📈']]},
     { s:'Contenu du site', icon:'🎨', items:[['Images du site','/admin/contenu/images','🖼️'],['Textes du site','/admin/contenu/textes','📝']]},
+    { s:'Communication', icon:'📧', items:[['Newsletters','/admin/newsletter','📬'],['Abonnes','/admin/newsletter/abonnes','👥']]},
   ];
   const sidebar = `<aside class="sidebar" id="adminSidebar">
     <div class="sb-brand">${logo(34)}<div><b>VAD Admin</b><br><span>${esc(state.user?.role||'')}</span></div></div>
@@ -1412,6 +1413,8 @@ r('/admin/referrals', viewReferrals);
 r('/admin/forecasts', viewForecasts);
 r('/admin/contenu/images', viewContentImages);
 r('/admin/contenu/textes', viewContentTexts);
+r('/admin/newsletter', viewNewsletter);
+r('/admin/newsletter/abonnes', viewNewsletter);
 
 /* ============================================================
    ÉVÉNEMENTS (délégution après rendu)
@@ -1455,6 +1458,7 @@ function afterRender(){
   if(document.querySelector("[data-imgkey]")) bindImageUploads();
   const hb=document.querySelector("[data-herobg]"); if(hb && state.content["img.hero-solidarite"]){hb.style.backgroundImage="url("+state.content["img.hero-solidarite"]+")";}
   if(document.querySelector("[data-txtsave]")) bindTextSaves();
+  if(document.getElementById("newsletterForm")||document.getElementById("nlSubject")) bindNewsletter();
   // formulaire contact
   const cf=$('#contactForm'); if(cf) cf.onsubmit=handleContact;
   // menus hamburger mobile
@@ -1595,6 +1599,48 @@ function initSlider(){
   function resetTimer(){ clearInterval(sliderTimer); sliderTimer=setInterval(()=>goSlide(sliderIdx+1),5000); }
   resetTimer();
 }
+
+async function viewNewsletter(){
+  return adminShell('/admin/newsletter', (async()=>{
+    const data = await api('/newsletter/subscribers');
+    const subs = data.items||[];
+    const emails = subs.filter(s=>s.email).map(s=>s.email).join(',');
+    const phones = subs.filter(s=>s.phone).map(s=>s.phone).join(', ');
+    return topbar('Newsletters & Abonnes', '')+'<div class="content">'+
+      '<div class="grid grid-3" style="margin-bottom:18px">'+
+        kpi('Abonnes total', fmt(data.total||0), '', '👥')+
+        kpi('Avec e-mail', fmt(subs.filter(s=>s.email).length), '', '✉️')+
+        kpi('Avec telephone', fmt(subs.filter(s=>s.phone).length), '', '📱')+
+      '</div>'+
+      '<div class="panel"><h3>Composer un message <span class="hint">envoyer aux '+fmt(subs.length)+' abonnes</span></h3>'+
+        '<div class="field"><label class="label">Sujet</label><input class="input" id="nlSubject" placeholder="Sujet du message"></div>'+
+        '<div class="field"><label class="label">Message</label><textarea class="textarea" id="nlMessage" rows="5" placeholder="Votre message..."></textarea></div>'+
+        '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
+          '<a class="btn btn-primary" id="nlEmailBtn" href="#" target="_blank">✉️ Envoyer par E-mail</a>'+
+          '<a class="btn btn-gold" id="nlWaBtn" href="https://wa.me/?text=" target="_blank">💬 Envoyer par WhatsApp</a>'+
+          '<button class="btn btn-ghost" id="nlSmsBtn">📱 Préparer SMS</button>'+
+        '</div>'+
+        '<div id="nlResult" style="margin-top:12px"></div>'+
+      '</div>'+
+      '<div class="panel"><h3>Liste des abonnes ('+fmt(subs.length)+')</h3>'+
+        (subs.length?'<div class="table-wrap"><table class="tbl"><thead><tr><th>Nom</th><th>E-mail</th><th>Telephone</th><th>Canal</th><th>Date</th><th></th></tr></thead><tbody>'+
+        subs.map(s=>'<tr><td>'+esc(s.name||'-')+'</td><td>'+esc(s.email||'-')+'</td><td>'+esc(s.phone||'-')+'</td><td><span class="badge badge-'+(s.channel==='whatsapp'?'green':s.channel==='sms'?'gold':'blue')+'">'+esc(s.channel)+'</span></td><td>'+fmtDate(s.createdAt)+'</td><td><button class="btn btn-danger btn-sm" data-delsub="'+s.id+'">Supprimer</button></td></tr>').join('')+
+        '</tbody></table></div>':'<div class="empty"><div class="ic">📬</div>Aucun abonne pour le moment</div>')+
+      '</div></div>';
+  })());
+}
+function bindNewsletter(){
+  var nf=document.getElementById('newsletterForm');
+  if(nf){ nf.onsubmit=async function(e){ e.preventDefault(); var f=new FormData(nf); var msg=document.getElementById('newsletterMsg'); msg.innerHTML='<span style="color:#94a3b8">Envoi...</span>'; try{ var r=await api('/newsletter/subscribe',{method:'POST',body:JSON.stringify({email:f.get('email'),channel:'email'})}); msg.innerHTML='<span style="color:#86efac">'+esc(r.message)+'</span>'; nf.reset(); }catch(err){ msg.innerHTML='<span style="color:#fca5a5">'+esc(err.message)+'</span>'; } }; }
+  var subj=document.getElementById('nlSubject'), msg2=document.getElementById('nlMessage');
+  var eb=document.getElementById('nlEmailBtn'), wb=document.getElementById('nlWaBtn'), sb=document.getElementById('nlSmsBtn');
+  function updateLinks(){ if(!subj) return; var s=encodeURIComponent(subj.value||'Newsletter VAD'); var m=encodeURIComponent(msg2.value||''); var bcc=document.getElementById('nlEmailBtn'); if(eb){ eb.href='mailto:?bcc='+encodeURIComponent(document.querySelectorAll('[data-delsub]')?'':'')+'&subject='+s+'&body='+m; } if(wb){ wb.href='https://wa.me/?text='+encodeURIComponent((subj.value||'')+'%0A%0A'+(msg2.value||'')); } if(sb){ sb.onclick=function(){ var res=document.getElementById('nlResult'); res.innerHTML='<div class="alert alert-success">Copiez ce message pour vos SMS:<br><textarea class="textarea" rows="3" style="margin-top:8px" readonly>'+(subj.value||'')+'\n\n'+(msg2.value||'')+'</textarea></div>'; }; } }
+  if(subj) subj.oninput=updateLinks;
+  if(msg2) msg2.oninput=updateLinks;
+  updateLinks();
+  document.querySelectorAll('[data-delsub]').forEach(function(b){ b.onclick=async function(){ if(!confirm('Supprimer cet abonne?')) return; try{ await api('/newsletter/subscribers/'+b.dataset.delsub,{method:'DELETE'}); dispatch(); }catch(e){ alert(e.message); } }; });
+}
+
 // Ecouteur global deconnexion (indestructible)
 document.addEventListener("click", function(e){ if(e.target.closest("#logoutBtn")){ e.preventDefault(); logout(); } });
 (async()=>{try{await loadContent();}catch(e){}dispatch();})();

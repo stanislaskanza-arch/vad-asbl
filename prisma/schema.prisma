@@ -353,3 +353,15 @@ model Setting {
 
   @@map("settings")
 }
+
+model Subscriber {
+  id        String   @id @default(uuid())
+  name      String?
+  email     String?  @unique
+  phone     String?
+  channel   String   @default("email")
+  isActive  Boolean   @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("subscribers")
+}

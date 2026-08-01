@@ -767,7 +767,7 @@ async function viewLogin(){
 async function adminShell(active, contentPromise){
   const nav = [
     { items:[['Tableau de bord','/admin','📊']] },
-    { s:'Gestion', icon:'🗂️', items:[['Membres','/admin/members','👥'],['Finances','/admin/finances','💰']]},
+    { s:'Gestion', icon:'🗂️', items:[['Membres','/admin/members','👥'],['Demandes d adhesion','/admin/demandes','📨'],['Finances','/admin/finances','💰']]},
     { s:'Réseau & Parrainage', icon:'🌐', items:[['Parrains & Arbre','/admin/sponsors','🌳'],['Parrainage & Liens','/admin/referrals','🔗'],['Projections','/admin/forecasts','📈']]},
     { s:'Contenu du site', icon:'🎨', items:[['Images du site','/admin/contenu/images','🖼️'],['Textes du site','/admin/contenu/textes','📝']]},
     { s:'Communication', icon:'📧', items:[['Newsletters','/admin/newsletter','📬'],['Abonnes','/admin/newsletter/abonnes','👥'],['Messages recus','/admin/messages','📧']]},
@@ -1400,6 +1400,7 @@ r('/mission/documents', viewDocuments);
 r('/login', viewLogin);
 r('/admin', viewDashboard);
 r('/admin/members', viewMembers);
+r('/admin/demandes', viewDemandes);
 r('/admin/members/new', viewNewMember);
 r('/admin/members/:id', viewMember);
 r('/admin/finances', viewFinances);
@@ -1493,7 +1494,7 @@ async function handleLogin(e){ e.preventDefault(); const f=new FormData(e.target
   try{ const r=await api('/auth/login',{method:'POST',body:JSON.stringify({username:f.get('username'),password:f.get('password')})}); saveAuth(r.token,r.user); location.hash='/admin'; }
   catch(err){ msg.innerHTML=`<div class="alert alert-error">⚠️ ${esc(err.message)}</div>`; btn.disabled=false; btn.textContent=old; }
 }
-function handleJoin(e){ e.preventDefault(); const msg=$('#joinMsg'); msg.innerHTML=`<div class="alert alert-success">🎉 Merci ! Votre demande d'adhésion a bien été enregistrée.<br><br>Un responsable de la VAD vous contactera sous peu pour finaliser votre inscription (numéro de membre, FLCP et lien de parrainage). 📞</div>`; e.target.reset(); window.scrollTo({top:0,behavior:'smooth'}); }
+async function handleJoin(e){ e.preventDefault(); var f=new FormData(e.target); var msg=document.getElementById('joinMsg'); if(msg) msg.innerHTML='<span class="muted">Envoi en cours...</span>'; try{ var r=await api('/misc/membership-request',{method:'POST',body:JSON.stringify({firstName:f.get('firstName'),lastName:f.get('lastName'),gender:f.get('gender'),phone:f.get('phone'),email:f.get('email'),city:f.get('city'),profession:f.get('profession'),sponsor:f.get('sponsor')})}); if(msg) msg.innerHTML='<div class="alert alert-success">'+esc(r.message)+'</div>'; e.target.reset(); window.scrollTo({top:0,behavior:'smooth'}); }catch(err){ if(msg) msg.innerHTML='<div class="alert alert-error">'+esc(err.message)+'</div>'; } }
 
 // Instructions dynamiques selon le moyen de paiement choisi
 function showPayInstruction(){
@@ -1656,6 +1657,24 @@ async function viewMessages(){
         (items.length?'<div class="table-wrap"><table class="tbl"><thead><tr><th>De</th><th>Sujet</th><th>Message</th><th>Date</th><th>Statut</th><th>Actions</th></tr></thead><tbody>'+
         items.map(function(m){return '<tr style="'+(m.isRead?'':'background:#fffbeb')+'"><td><b>'+esc(m.name)+'</b><br><span class="muted" style="font-size:12px">'+esc(m.email)+'</span></td><td>'+esc(m.subject||'-')+'</td><td style="max-width:300px;font-size:13px">'+esc((m.message||'').substring(0,120))+(m.message&&m.message.length>120?'...':'')+'</td><td style="font-size:12px">'+fmtDate(m.createdAt)+'</td><td>'+(m.isRead?'<span class="badge badge-gray">Lu</span>':'<span class="badge badge-gold">Non lu</span>')+'</td><td style="white-space:nowrap"><a class="btn btn-ghost btn-sm" href="mailto:'+esc(m.email)+'?subject=Re: '+esc(m.subject||'')+'">Répondre</a> '+(m.isRead?'':'<button class="btn btn-primary btn-sm" data-readmsg="'+m.id+'">Lire</button> ')+'<button class="btn btn-danger btn-sm" data-delmsg="'+m.id+'">Supprimer</button></td></tr>'}).join('')+
         '</tbody></table></div>':'<div class="empty"><div class="ic">📧</div>Aucun message pour le moment</div>')+
+      '</div></div>';
+  })());
+}
+
+
+async function viewDemandes(){
+  return adminShell('/admin/demandes', (async()=>{
+    const data = await api('/members/requests');
+    const items = data.items||[];
+    return topbar('Demandes d adhesion', '')+'<div class="content">'+
+      '<div class="grid grid-2" style="margin-bottom:18px">'+
+        kpi('Total demandes', fmt(data.total||0), '', '📨')+
+        kpi('En attente', fmt(data.pending||0), '', '⏳')+
+      '</div>'+
+      '<div class="panel"><h3>Demandes recues</h3>'+
+        (items.length?'<div class="table-wrap"><table class="tbl"><thead><tr><th>Nom</th><th>Telephone</th><th>Ville</th><th>Parrain</th><th>Date</th><th>Statut</th><th>Actions</th></tr></thead><tbody>'+
+        items.map(function(r){return '<tr style="'+(r.status==='pending'?'background:#fffbeb':'')+'"><td><b>'+esc(r.firstName)+' '+esc(r.lastName)+'</b>'+(r.gender?'<br><span class="muted" style="font-size:11px">'+esc(r.gender==='M'?'Masculin':'Feminin')+'</span>':'')+(r.email?'<br><span class="muted" style="font-size:11px">'+esc(r.email)+'</span>':'')+'</td><td>'+esc(r.phone||'-')+'</td><td>'+esc(r.city||'-')+(r.profession?'<br><span class="muted" style="font-size:11px">'+esc(r.profession)+'</span>':'')+'</td><td>'+(r.sponsorCode?'<span class="badge badge-blue mono">'+esc(r.sponsorCode)+'</span>':'<span class="muted">Aucun</span>')+'</td><td style="font-size:12px">'+fmtDate(r.createdAt)+'</td><td>'+(r.status==='pending'?'<span class="badge badge-gold">En attente</span>':r.status==='approved'?'<span class="badge badge-green">Approuve</span>':'<span class="badge badge-gray">Rejete</span>')+'</td><td style="white-space:nowrap">'+(r.status==='pending'?'<button class="btn btn-primary btn-sm" data-approve="'+r.id+'">Approuver</button> <button class="btn btn-danger btn-sm" data-deldemande="'+r.id+'">Refuser</button>':'<button class="btn btn-danger btn-sm" data-deldemande="'+r.id+'">Supprimer</button>')+'</td></tr>'}).join('')+
+        '</tbody></table></div>':'<div class="empty"><div class="ic">📨</div>Aucune demande pour le moment</div>')+
       '</div></div>';
   })());
 }

@@ -130,7 +130,7 @@
   .nav-group-header .gh-left{display:flex;align-items:center;gap:9px}
   .nav-group-header .gh-ico{font-size:16px}
   .nav-group-header .gh-caret{font-size:11px;transition:transform .25s;color:rgba(255,255,255,.5)}
-  .nav-group-header.open .gh-caret{transform:rotate(180deg)}
+  .nav-group-header.collapsed .gh-caret{transform:rotate(180deg)}
   .nav-group-items{overflow:hidden;max-height:500px;transition:max-height .35s ease,opacity .25s;opacity:1}
   .nav-group-items.collapsed{max-height:0;opacity:0}
   .nav-group-items .nav-item{padding-left:22px}
@@ -774,7 +774,7 @@ async function adminShell(active, contentPromise){
     ${nav.map(sec=>{
       if(!sec.s){ return '<div class="nav-section">'+sec.items.map(it=>'<a class="nav-item '+(active===it[1]?'active':'')+'" href="#'+it[1]+'"><span class="ic">'+it[2]+'</span>'+it[0]+'</a>').join('')+'</div>'; }
       const hasActive = sec.items.some(it=>active===it[1]);
-      return '<div class="nav-section"><div class="nav-group-header '+'open'+'" data-grp="'+sec.s+'"><span class="gh-left"><span class="gh-ico">'+sec.icon+'</span>'+sec.s+'</span><span class="gh-caret">▼</span></div><div class="nav-group-items '+'open'+'">'+sec.items.map(it=>'<a class="nav-item '+(active===it[1]?'active':'')+'" href="#'+it[1]+'"><span class="ic">'+it[2]+'</span>'+it[0]+'</a>').join('')+'</div></div>';
+      return '<div class="nav-section"><div class="nav-group-header '+'open'+'" data-grp="'+sec.s+'"><span class="gh-left"><span class="gh-ico">'+sec.icon+'</span>'+sec.s+'</span><span class="gh-caret">▼</span></div><div class="nav-group-items">'+sec.items.map(it=>'<a class="nav-item '+(active===it[1]?'active':'')+'" href="#'+it[1]+'"><span class="ic">'+it[2]+'</span>'+it[0]+'</a>').join('')+'</div></div>';
     }).join('')}
     <div class="nav-section"><a href="#/" class="nav-item" id="logoutBtn" onclick="logout()" style="cursor:pointer;color:#fca5a5"><span class="ic">🚪</span>Déconnexion</a></div>
   </aside>`;
@@ -1411,7 +1411,7 @@ r('/admin/contenu/textes', viewContentTexts);
    ============================================================ */
 function afterRender(){
   // accordéon sidebar admin
-  $$(".nav-group-header").forEach(function(h){ h.onclick=function(){ h.classList.toggle("open"); if(h.nextElementSibling) h.nextElementSibling.classList.toggle("open"); }; });
+  $$(".nav-group-header").forEach(function(h){ h.onclick=function(){ h.classList.toggle("collapsed"); if(h.nextElementSibling) h.nextElementSibling.classList.toggle("collapsed"); }; });
   // logout
   const lo = $('#logoutBtn'); if(lo) lo.onclick = logout;
   // devise

@@ -381,6 +381,13 @@ let txtSection = '';
 async function viewContentTexts(){
   return adminShell('/admin/contenu/textes', (async()=>{
     const data = await api('/content/texts');
+    // Remplir les valeurs par defaut avec le contenu actuel du site
+    const defs = {};
+    if(typeof ACTIVITIES!=='undefined'){ Object.keys(ACTIVITIES).forEach(function(k){ var a=ACTIVITIES[k]; defs['txt.activity.'+k+'.intro']=a.intro; if(a.sections){a.sections.forEach(function(s,i){defs['txt.activity.'+k+'.s'+(i+1)]=s.p;});} }); }
+    defs['txt.president.message']="Chers membres et partenaires de Vision d Assistance et de Developpement (VAD),\n\nC est avec un grand honneur que je m adresse a vous en ma qualite de Coordonnateur National. Notre association, nee de la volonte de lutter contre la pauvrete, oeuvre chaque jour dans la region sub-saharienne pour apporter un changement durable dans la vie des communautes les plus vulnerables.\n\nEnsemble, vainquons la pauvrete !\n\nBien fraternellement,\nKANZA NZINU Stanislas\nCoordonnateur National, VAD";
+    defs['txt.mission.intro']="Vision d Assistance et de Developpement (VAD) a pour mission principale la lutte contre la pauvrete. Cette lutte passe par l ensemble d activites que l ASBL VAD organise.";
+    defs['txt.genes']="Tout est parti d un constat : la pauvrete frappe durement les populations d Afrique sub-saharienne. Face a cette realite, KANZA NZINU Stanislas et un groupe de personnes engagees ont concu une idee : creer une association ou la solidarite deviendrait un veritable levier contre la pauvrete.";
+    data.items.forEach(function(i){ if(!i.value && defs[i.key]){ i.value=defs[i.key]; } });
     const sections = [...new Set(data.items.map(i=>i.section))];
     if(!txtSection) txtSection = sections[0] || '';
     const tabs = sections.map(s=>`<div class="tab ${s===txtSection?'active':''}" data-txtsec="${s}">${s}</div>`).join('');

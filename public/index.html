@@ -328,7 +328,7 @@ async function api(path, opts={}, {raw=false}={}){
     res = await fetch(API+path, {...opts, headers});
   }catch(e){ throw new Error('Connexion au serveur impossible'); }
   const data = await res.json().catch(()=>({}));
-  if (res.status === 401 && state.token){ logout(); throw new Error('Session expirée'); }
+  if (res.status === 401 && state.token){ state.token=null; state.user=null; localStorage.removeItem('vad_token'); localStorage.removeItem('vad_user'); location.hash='/login'; throw new Error('Session expirée. Reconnectez-vous.'); }
   if (!res.ok) throw new Error(data.error || ('Erreur '+res.status));
   return data;
 }

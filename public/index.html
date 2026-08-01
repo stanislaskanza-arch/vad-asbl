@@ -776,7 +776,7 @@ async function adminShell(active, contentPromise){
       const hasActive = sec.items.some(it=>active===it[1]);
       return '<div class="nav-section"><div class="nav-group-header '+'open'+'" data-grp="'+sec.s+'"><span class="gh-left"><span class="gh-ico">'+sec.icon+'</span>'+sec.s+'</span><span class="gh-caret">▼</span></div><div class="nav-group-items '+'open'+'">'+sec.items.map(it=>'<a class="nav-item '+(active===it[1]?'active':'')+'" href="#'+it[1]+'"><span class="ic">'+it[2]+'</span>'+it[0]+'</a>').join('')+'</div></div>';
     }).join('')}
-    <div class="nav-section"><div class="nav-item" id="logoutBtn" style="cursor:pointer;color:#fca5a5"><span class="ic">🚪</span>Déconnexion</div></div>
+    <div class="nav-section"><div class="nav-item" id="logoutBtn" onclick="logout()" style="cursor:pointer;color:#fca5a5"><span class="ic">🚪</span>Déconnexion</div></div>
   </aside>`;
 
   let content = loading('Chargement…');

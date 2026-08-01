@@ -770,7 +770,7 @@ async function adminShell(active, contentPromise){
     { s:'Gestion', icon:'🗂️', items:[['Membres','/admin/members','👥'],['Finances','/admin/finances','💰']]},
     { s:'Réseau & Parrainage', icon:'🌐', items:[['Parrains & Arbre','/admin/sponsors','🌳'],['Parrainage & Liens','/admin/referrals','🔗'],['Projections','/admin/forecasts','📈']]},
     { s:'Contenu du site', icon:'🎨', items:[['Images du site','/admin/contenu/images','🖼️'],['Textes du site','/admin/contenu/textes','📝']]},
-    { s:'Communication', icon:'📧', items:[['Newsletters','/admin/newsletter','📬'],['Abonnes','/admin/newsletter/abonnes','👥']]},
+    { s:'Communication', icon:'📧', items:[['Newsletters','/admin/newsletter','📬'],['Abonnes','/admin/newsletter/abonnes','👥'],['Messages recus','/admin/messages','📧']]},
   ];
   const sidebar = `<aside class="sidebar" id="adminSidebar">
     <div class="sb-brand">${logo(34)}<div><b>VAD Admin</b><br><span>${esc(state.user?.role||'')}</span></div></div>
@@ -1410,6 +1410,7 @@ r('/admin/contenu/images', viewContentImages);
 r('/admin/contenu/textes', viewContentTexts);
 r('/admin/newsletter', viewNewsletter);
 r('/admin/newsletter/abonnes', viewNewsletter);
+r('/admin/messages', viewMessages);
 
 /* ============================================================
    ÉVÉNEMENTS (délégution après rendu)
@@ -1559,14 +1560,18 @@ async function handleRefSelect(e){
    DÉMARRAGE
    ============================================================ */
 // Gestion du formulaire de contact (ouvre le client email avec le message pré-rempli)
-function handleContact(e){
+async function handleContact(e){
   e.preventDefault();
-  const f=new FormData(e.target);
-  const subject=encodeURIComponent('[VAD] '+(f.get('subject')||'Message'));
-  const body=encodeURIComponent('Nom: '+f.get('name')+'\nContact: '+f.get('contact')+'\n\n'+f.get('message'));
-  window.location.href='mailto:kanzastanislas@yahoo.fr?subject='+subject+'&body='+body;
-  $('#contactMsg').innerHTML='<div class="alert alert-success">✅ Votre messagerie va souvrir avec le message pré-rempli. Cliquez sur « Envoyer » dans votre application e-mail.</div>';
-  e.target.reset();
+  var f=new FormData(e.target);
+  var msgDiv=document.getElementById('contactMsg');
+  if(msgDiv) msgDiv.innerHTML='<span class="muted">Envoi en cours...</span>';
+  try{
+    var r=await api('/contact/message',{method:'POST',body:JSON.stringify({name:f.get('name'),email:f.get('contact'),subject:f.get('subject'),message:f.get('message')})});
+    if(msgDiv) msgDiv.innerHTML='<div class="alert alert-success">'+esc(r.message)+'</div>';
+    e.target.reset();
+  }catch(err){
+    if(msgDiv) msgDiv.innerHTML='<div class="alert alert-error">'+esc(err.message)+'</div>';
+  }
 }
 
 // Initialisation du carrousel d'images (page d'accueil)
@@ -1634,6 +1639,25 @@ function bindNewsletter(){
   if(msg2) msg2.oninput=updateLinks;
   updateLinks();
   document.querySelectorAll('[data-delsub]').forEach(function(b){ b.onclick=async function(){ if(!confirm('Supprimer cet abonne?')) return; try{ await api('/newsletter/subscribers/'+b.dataset.delsub,{method:'DELETE'}); dispatch(); }catch(e){ alert(e.message); } }; });
+}
+
+
+async function viewMessages(){
+  return adminShell('/admin/messages', (async()=>{
+    const data = await api('/contact/messages');
+    const items = data.items||[];
+    return topbar('Messages recus', '')+'<div class="content">'+
+      '<div class="grid grid-3" style="margin-bottom:18px">'+
+        kpi('Total messages', fmt(data.total||0), '', '📧')+
+        kpi('Non lus', fmt(data.unread||0), '', '🚫')+
+        kpi('Lus', fmt((data.total||0)-(data.unread||0)), '', '✅')+
+      '</div>'+
+      '<div class="panel"><h3>Boîte de réception</h3>'+
+        (items.length?'<div class="table-wrap"><table class="tbl"><thead><tr><th>De</th><th>Sujet</th><th>Message</th><th>Date</th><th>Statut</th><th>Actions</th></tr></thead><tbody>'+
+        items.map(function(m){return '<tr style="'+(m.isRead?'':'background:#fffbeb')+'"><td><b>'+esc(m.name)+'</b><br><span class="muted" style="font-size:12px">'+esc(m.email)+'</span></td><td>'+esc(m.subject||'-')+'</td><td style="max-width:300px;font-size:13px">'+esc((m.message||'').substring(0,120))+(m.message&&m.message.length>120?'...':'')+'</td><td style="font-size:12px">'+fmtDate(m.createdAt)+'</td><td>'+(m.isRead?'<span class="badge badge-gray">Lu</span>':'<span class="badge badge-gold">Non lu</span>')+'</td><td style="white-space:nowrap"><a class="btn btn-ghost btn-sm" href="mailto:'+esc(m.email)+'?subject=Re: '+esc(m.subject||'')+'">Répondre</a> '+(m.isRead?'':'<button class="btn btn-primary btn-sm" data-readmsg="'+m.id+'">Lire</button> ')+'<button class="btn btn-danger btn-sm" data-delmsg="'+m.id+'">Supprimer</button></td></tr>'}).join('')+
+        '</tbody></table></div>':'<div class="empty"><div class="ic">📧</div>Aucun message pour le moment</div>')+
+      '</div></div>';
+  })());
 }
 
 // Ecouteur global deconnexion (indestructible)

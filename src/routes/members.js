@@ -1,6 +1,48 @@
 const router = require('express').Router();
 const { authenticate } = require('../middleware/auth');
 router.use(authenticate);
+// GET /requests - liste des demandes d adhesion (admin)
+router.get("/requests", async (req, res) => {
+  try {
+    const items = await req.prisma.membershipRequest.findMany({ orderBy: { createdAt: "desc" } });
+    const pending = await req.prisma.membershipRequest.count({ where: { status: "pending" } });
+    res.json({ items, total: items.length, pending });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// POST /requests/:id/approve - approuver (cree le membre) (admin)
+router.post("/requests/:id/approve", async (req, res) => {
+  try {
+    const r = await req.prisma.membershipRequest.findUnique({ where: { id: req.params.id } });
+    if (!r) return res.status(404).json({ error: "Demande introuvable" });
+    let sponsoredBy = null;
+    if (r.sponsorCode) {
+      const sponsor = await req.prisma.member.findFirst({ where: { membershipNumber: { contains: r.sponsorCode } } });
+      if (sponsor) sponsoredBy = sponsor.id;
+    }
+    const year = new Date().getFullYear();
+    const count = await req.prisma.member.count();
+    const num = "VAD-"+year+"-"+String(count+1).padStart(6,"0");
+    const hex = "0123456789ABCDEF"; let code = "VAD-";
+    for (let i=0;i<6;i++) code += hex[Math.floor(Math.random()*16)];
+    const member = await req.prisma.member.create({
+      data: { membershipNumber: num, firstName: r.firstName, lastName: r.lastName, gender: r.gender, phone: r.phone, email: r.email, city: r.city, profession: r.profession, country: "RDC", sponsoredBy,
+        aipAccount: { create: {} }, referralLinks: { create: { code } } }
+    });
+    await req.prisma.membershipRequest.update({ where: { id: r.id }, data: { status: "approved" } });
+    res.json({ ok: true, membershipNumber: num, message: "Membre cree: "+num });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// DELETE /requests/:id - supprimer une demande (admin)
+router.delete("/requests/:id", async (req, res) => {
+  try {
+    await req.prisma.membershipRequest.delete({ where: { id: req.params.id } });
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+
 
 function generateReferralCode() {
   const hex = '0123456789ABCDEF';
@@ -124,46 +166,5 @@ router.post('/', async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-
-// GET /requests - liste des demandes d adhesion (admin)
-router.get("/requests", async (req, res) => {
-  try {
-    const items = await req.prisma.membershipRequest.findMany({ orderBy: { createdAt: "desc" } });
-    const pending = await req.prisma.membershipRequest.count({ where: { status: "pending" } });
-    res.json({ items, total: items.length, pending });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// POST /requests/:id/approve - approuver (cree le membre) (admin)
-router.post("/requests/:id/approve", async (req, res) => {
-  try {
-    const r = await req.prisma.membershipRequest.findUnique({ where: { id: req.params.id } });
-    if (!r) return res.status(404).json({ error: "Demande introuvable" });
-    let sponsoredBy = null;
-    if (r.sponsorCode) {
-      const sponsor = await req.prisma.member.findFirst({ where: { membershipNumber: { contains: r.sponsorCode } } });
-      if (sponsor) sponsoredBy = sponsor.id;
-    }
-    const year = new Date().getFullYear();
-    const count = await req.prisma.member.count();
-    const num = "VAD-"+year+"-"+String(count+1).padStart(6,"0");
-    const hex = "0123456789ABCDEF"; let code = "VAD-";
-    for (let i=0;i<6;i++) code += hex[Math.floor(Math.random()*16)];
-    const member = await req.prisma.member.create({
-      data: { membershipNumber: num, firstName: r.firstName, lastName: r.lastName, gender: r.gender, phone: r.phone, email: r.email, city: r.city, profession: r.profession, country: "RDC", sponsoredBy,
-        aipAccount: { create: {} }, referralLinks: { create: { code } } }
-    });
-    await req.prisma.membershipRequest.update({ where: { id: r.id }, data: { status: "approved" } });
-    res.json({ ok: true, membershipNumber: num, message: "Membre cree: "+num });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// DELETE /requests/:id - supprimer une demande (admin)
-router.delete("/requests/:id", async (req, res) => {
-  try {
-    await req.prisma.membershipRequest.delete({ where: { id: req.params.id } });
-    res.json({ ok: true });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
 
 module.exports = router;

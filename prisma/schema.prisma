@@ -377,3 +377,19 @@ model ContactMessage {
 
   @@map("contact_messages")
 }
+
+model MembershipRequest {
+  id          String   @id @default(uuid())
+  firstName   String   @map("first_name")
+  lastName    String   @map("last_name")
+  gender      String?
+  phone       String?
+  email       String?
+  city        String?
+  profession  String?
+  sponsorCode String?  @map("sponsor_code")
+  status      String   @default("pending")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("membership_requests")
+}

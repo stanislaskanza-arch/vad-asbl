@@ -964,7 +964,7 @@ async function viewFinances(){
         <div class="grid grid-2">
           <div class="field"><label class="label">Membre *</label><select class="select" name="memberId" id="flcpMember" required></select></div>
           <div class="field"><label class="label">Type de cotisation</label><select class="select" name="contributionTypeId" id="flcpType">${cts.items.map(c=>`<option value="${c.id}" ${c.code==='FLCP-MENSUEL'?'selected':''}>${esc(c.code)} — ${esc(c.name)}</option>`).join('')}</select></div>
-          <div class="field"><label class="label">Montant (CDF) *</label><input class="input" name="amount" type="number" value="${flcpType?.defaultAmount||5000}" required></div>
+          <div class="field"><label class="label">Montant *</label><div style="position:relative"><input class="input" name="amount" type="number" step="any" min="0" value="${flcpType?.defaultAmount||5000}" required style="padding-right:50px"><span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--green-700);font-size:14px;font-weight:700;pointer-events:none">CDF</span></div></div>
           <div class="field"><label class="label">Date de paiement</label><input class="input" name="paymentDate" type="date" value="${new Date().toISOString().slice(0,10)}"></div>
           <div class="field"><label class="label">Mode de paiement</label><select class="select" name="paymentMethodId">${pms.items.map(p=>`<option value="${p.id}">${p.ic||''} ${esc(p.name)}</option>`).join('')}</select></div>
           <div class="field"><label class="label">Référence</label><input class="input" name="reference" placeholder="ex: FLCP 2026-07"></div>
@@ -1003,7 +1003,7 @@ async function viewFinances(){
     tiersHTML = `<div class="panel"><h3>🎁 Enregistrer une contribution de tiers</h3><form id="tiersForm"><div id="tiersMsg"></div><div class="grid grid-2">
       <div class="field"><label class="label">Type *</label><select class="select" name="type"><option value="SUBVENTION">Subvention</option><option value="DON">Don</option><option value="LEG">Legs</option></select></div>
       <div class="field"><label class="label">Donateur *</label><input class="input" name="donorName" required></div>
-      <div class="field"><label class="label">Montant (CDF) *</label><input class="input" name="amount" type="number" required></div>
+      <div class="field"><label class="label">Montant *</label><div style="position:relative"><input class="input" name="amount" type="number" step="any" min="0" required style="padding-right:50px"><span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--green-700);font-size:14px;font-weight:700;pointer-events:none">CDF</span></div></div>
       <div class="field"><label class="label">Date</label><input class="input" name="contributionDate" type="date" value="${new Date().toISOString().slice(0,10)}"></div>
       <div class="field"><label class="label">Contact donateur</label><input class="input" name="donorContact"></div>
       <div class="field"><label class="label">Projet / Référence contrat</label><input class="input" name="projectName" placeholder="Nom du projet"></div>
@@ -1139,7 +1139,7 @@ async function viewCotiser(){
         <div class="grid grid-2">
           <div class="field"><label class="label">Votre numéro de membre *</label><input class="input" name="membershipNumber" placeholder="VAD-2026-000001" required></div>
           <div class="field"><label class="label">Type de cotisation</label><select class="select" name="contributionTypeCode"><option value="FLCP-MENSUEL">FLCP mensuel (5000 CDF)</option><option value="DON-VOLONTAIRE">Don volontaire</option><option value="COTIS-ANNUELLE">Cotisation annuelle</option></select></div>
-          <div class="field"><label class="label">Montant (CDF) *</label><input class="input" name="amount" type="number" value="5000" min="100" required></div>
+          <div class="field"><label class="label">Montant *</label><div style="position:relative"><input class="input" name="amount" type="number" step="any" min="0" value="5000" required style="padding-right:50px"><span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--green-700);font-size:14px;font-weight:700;pointer-events:none">CDF</span></div></div>
           <div class="field"><label class="label">Période (mois)</label><input class="input" name="period" type="month" value="${periodVal}"></div>
           <div class="field"><label class="label">Moyen de paiement utilisé *</label><select class="select" name="paymentMethod" id="payMethodSel" required><option value="">— Choisir —</option><option value="bank_transfer">🏦 Compte bancaire</option><option value="mpesa">📱 M-Pesa</option><option value="orange_money">🟠 Orange Money</option><option value="airtel_money">🔴 Airtel Money</option></select></div>
           <div class="field"><label class="label">Référence / Code de transaction</label><input class="input" name="transactionRef" placeholder="ex: code SMS reçu après paiement"></div>

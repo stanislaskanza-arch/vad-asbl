@@ -360,7 +360,21 @@ async function viewContentImages(){
     const data = await api('/content/images');
     return `${topbar('🖼️ Images du site', '')}
     <div class="content">
-      <div class="panel"><p class="slate" style="font-size:14px">Remplacez les images du site. Cliquez sur <b>« Changer »</b>, sélectionnez une nouvelle image sur votre appareil. La modification est immédiate et persistante.</p></div>
+      <div class="panel"><p class="slate" style="font-size:14px">Remplacez les images du site. Cliquez sur <b>« Changer »</b>, sélectionnez une nouvelle image sur votre appareil.</p></div>
+      <div class="panel" style="border:2px solid var(--gold);background:linear-gradient(135deg,#fffbeb,#fff);margin-bottom:18px">
+        <h3 style="color:#92400e;display:flex;align-items:center;gap:8px;font-size:18px"><span style="font-size:24px">🎨</span> LOGO DE L ASSOCIATION VAD</h3>
+        <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap;margin-top:14px">
+          <img src="${img('logo-vad.png')}" alt="Logo VAD" style="width:100px;height:100px;border-radius:50%;object-fit:contain;border:3px solid var(--green-100);box-shadow:0 4px 16px rgba(0,0,0,.1);background:#fff;flex-shrink:0"/>
+          <div style="flex:1;min-width:200px">
+            <p class="slate" style="font-size:13.5px;margin-bottom:12px">Le logo apparait dans l en-tete du site, le pied de page, la page de connexion et l onglet du navigateur.</p>
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <label class="btn btn-gold" style="cursor:pointer">📁 Changer le logo<input type="file" accept="image/*" style="display:none" data-imgkey="img.logo-vad"></label>
+            </div>
+            <div data-imgmsg="img.logo-vad" style="margin-top:8px"></div>
+          </div>
+        </div>
+      </div>
+      <div style="font-size:13px;font-weight:700;color:var(--green-900);margin-bottom:10px">📸 Autres images du site</div>
       <div class="grid grid-2">
         ${data.items.map(im => `<div class="panel">
           <h3>${im.label} <span class="badge ${im.overridden?'badge-gold':'badge-gray'}" style="font-size:11px">${im.overridden?'Modifiée':'Par défaut'}</span></h3>

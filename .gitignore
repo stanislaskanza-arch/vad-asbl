@@ -2,9 +2,9 @@
 node_modules/
 
 # Base de données locale (SQLite - seulement pour les tests)
-*.db
+# *.db
 *.db-journal
-prisma/*.db
+# prisma/*.db
 
 # Logs
 *.log

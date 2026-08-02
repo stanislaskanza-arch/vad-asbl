@@ -1679,6 +1679,19 @@ async function viewDemandes(){
   })());
 }
 
+// Ecouteurs globaux: approuver/refuser demandes adhesion
+document.addEventListener("click", function(e){
+  var ab=e.target.closest("[data-approve]");
+  if(ab){ e.preventDefault(); if(!confirm("Approuver cette demande et creer le membre?")) return; ab.disabled=true; ab.textContent="..."; api("/members/requests/"+ab.dataset.approve+"/approve",{method:"POST"}).then(function(r){ alert(r.message||"Membre cree!"); dispatch(); }).catch(function(err){ alert(err.message); ab.disabled=false; ab.textContent="Approuver"; }); return; }
+  var db=e.target.closest("[data-deldemande]");
+  if(db){ e.preventDefault(); if(!confirm("Supprimer cette demande?")) return; api("/members/requests/"+db.dataset.deldemande,{method:"DELETE"}).then(function(){ dispatch(); }).catch(function(err){ alert(err.message); }); return; }
+});
+document.addEventListener("click", function(e){
+  var rb=e.target.closest("[data-readmsg]");
+  if(rb){ e.preventDefault(); api("/contact/messages/"+rb.dataset.readmsg+"/read",{method:"POST"}).then(function(){ dispatch(); }).catch(function(err){ alert(err.message); }); return; }
+  var dmb=e.target.closest("[data-delmsg]");
+  if(dmb){ e.preventDefault(); if(!confirm("Supprimer ce message?")) return; api("/contact/messages/"+dmb.dataset.delmsg,{method:"DELETE"}).then(function(){ dispatch(); }).catch(function(err){ alert(err.message); }); return; }
+});
 // Ecouteur global deconnexion (indestructible)
 document.addEventListener("click", function(e){ if(e.target.closest("#logoutBtn")){ e.preventDefault(); logout(); } });
 (async()=>{try{await loadContent();}catch(e){}

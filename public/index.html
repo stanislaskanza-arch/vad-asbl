@@ -338,7 +338,7 @@ function logout(){ state.token=null; state.user=null; localStorage.removeItem('v
 
 /* ---------- logo VAD (emblème carte d'Afrique + texte) ---------- */
 function logo(size=44){
-  return `<img src="/images/logo-vad.png" alt="Logo VAD" width="${size}" height="${size}" style="width:${size}px;height:${size}px;object-fit:contain;flex-shrink:0;border-radius:50%" onerror="this.style.display='none'"/>`;
+  return `<img src="${img('logo-vad.png')}" alt="Logo VAD" width="${size}" height="${size}" style="width:${size}px;height:${size}px;object-fit:contain;flex-shrink:0;border-radius:50%" onerror="this.style.display='none'"/>`;
 }
 
 /* ============================================================
@@ -1709,6 +1709,7 @@ document.addEventListener("click", function(e){
 // Ecouteur global deconnexion (indestructible)
 document.addEventListener("click", function(e){ if(e.target.closest("#logoutBtn")){ e.preventDefault(); logout(); } });
 (async()=>{try{await loadContent();}catch(e){}
+  if(state.content["img.logo-vad"]){var fav=document.querySelector("link[rel=icon]");if(fav)fav.href=state.content["img.logo-vad"];}
   if(state.token){ try{ await api('/auth/me'); }catch(e){ state.token=null; state.user=null; localStorage.removeItem('vad_token'); localStorage.removeItem('vad_user'); } }
   dispatch();})();
 </script>
